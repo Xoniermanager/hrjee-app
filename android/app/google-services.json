@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "781782197935",
+    "project_id": "hrjee-afa99",
+    "storage_bucket": "hrjee-afa99.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:781782197935:android:e8e3fe34eaeee188b8165a",
+        "android_client_info": {
+          "package_name": "com.hrjee"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "781782197935-6vft9d159059mql6d6ogun7r67eciijj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQ7TN58ZHA0-C3M4KT3QExJV2gDJ1cC7w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "781782197935-6vft9d159059mql6d6ogun7r67eciijj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
