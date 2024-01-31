@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, { useState, useContext } from 'react';
 import {
   StyleSheet,
   Text,
@@ -30,8 +30,8 @@ import {
   useRoute,
   getFocusedRouteNameFromRoute,
 } from '@react-navigation/native';
-const {width} = Dimensions.get('window');
-const {height} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 const Drawer = createDrawerNavigator();
 import GlobalStyle from '../src/reusable/GlobalStyle';
 import apiUrl from '../src/reusable/apiUrl';
@@ -41,7 +41,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import GetLocation from 'react-native-get-location';
 import ProfileNavigator from './ProfileNavigator';
-import {EssContext} from '../Context/EssContext';
+import { EssContext } from '../Context/EssContext';
 import Zocial from 'react-native-vector-icons/Zocial';
 
 function CustomDrawerContent(props) {
@@ -99,7 +99,7 @@ function CustomDrawerContent(props) {
   const get_employee_detail = async () => {
     const token = await AsyncStorage.getItem('Token');
     const config = {
-      headers: {Token: token},
+      headers: { Token: token },
     };
     axios
       .post(`${apiUrl}/api/get_employee_detail`, {}, config)
@@ -140,7 +140,7 @@ function CustomDrawerContent(props) {
   const get_address = async () => {
     const token = await AsyncStorage.getItem('Token');
     const config = {
-      headers: {Token: token},
+      headers: { Token: token },
     };
     axios
       .post(`${apiUrl}/api/get_location_list`, {}, config)
@@ -172,7 +172,7 @@ function CustomDrawerContent(props) {
         setloading(true);
         const token = await AsyncStorage.getItem('Token');
         const config = {
-          headers: {Token: token},
+          headers: { Token: token },
         };
         const body = {
           location_name: addressTitle,
@@ -209,16 +209,51 @@ function CustomDrawerContent(props) {
       })
       .catch(error => {
         setloading(false);
-        const {code, message} = error;
+        const { code, message } = error;
         console.warn(code, message);
       });
+  };
+
+  const EditProfile = async () => {
+    const token = await AsyncStorage.getItem('Token');
+    const config = {
+      headers: { Token: token },
+    };
+    body = {
+      father_name: Userdata?.fatherName,
+      dob: Userdata?.dob,
+      SEX: Userdata?.gender,
+      email: Userdata?.email,
+      mobile_no: Userdata?.phone,
+      permanent_address: Userdata?.permanentAddress,
+      temp_address: Userdata?.location
+    }
+    console.log("body => ", body)
+    axios
+      .post(`${apiUrl}/SecondPhaseApi/update_employee_data`, body, config)
+      .then(response => {
+        if (response.data.status === 1) {
+          try {
+            // props.navigation.navigate('Home')
+            alert(response?.data?.message)
+          } catch (e) {
+            console.log(e);
+          }
+        } else {
+          console.log('some error occured');
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
   };
 
   const delete_address = async id => {
     setloading(true);
     const token = await AsyncStorage.getItem('Token');
     const config = {
-      headers: {Token: token},
+      headers: { Token: token },
     };
     const body = {
       location_id: id,
@@ -262,7 +297,7 @@ function CustomDrawerContent(props) {
         setloading(true);
         const token = await AsyncStorage.getItem('Token');
         const config = {
-          headers: {Token: token},
+          headers: { Token: token },
         };
         const body = {
           location_id: id,
@@ -301,7 +336,7 @@ function CustomDrawerContent(props) {
       })
       .catch(error => {
         setloading(false);
-        const {code, message} = error;
+        const { code, message } = error;
         console.warn(code, message);
       });
   };
@@ -309,7 +344,7 @@ function CustomDrawerContent(props) {
   const makeActive = async id => {
     const token = await AsyncStorage.getItem('Token');
     const config = {
-      headers: {Token: token},
+      headers: { Token: token },
     };
     const body = {
       location_id: id,
@@ -348,98 +383,103 @@ function CustomDrawerContent(props) {
   const renderDetails = show => {
     if (show == 'PersonalDetails') {
       return (
-        <View>
-          <View style={{marginVertical: 10}}>
-            <Text style={styles.heading_modal}>Profile Photo</Text>
-            <View style={{}}>
-              <Image
-                style={styles.tinyLogo}
-                source={
-                  Userdata.image
-                    ? {uri: Userdata.image}
-                    : require('../src/images/profile_pic.webp')
-                }
+        <>
+          <View>
+            <View style={{ marginVertical: 10 }}>
+              <Text style={styles.heading_modal}>Profile Photo</Text>
+              <View style={{}}>
+                <Image
+                  style={styles.tinyLogo}
+                  source={
+                    Userdata.image
+                      ? { uri: Userdata.image }
+                      : require('../src/images/profile_pic.webp')
+                  }
+                />
+              </View>
+            </View>
+            <View style={{ marginVertical: 10 }}>
+              <Text style={styles.heading_modal}>Father's Name</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Father's Name"
+                selectTextOnFocus={false}
+                onChangeText={(text)=> setUserdata({...Userdata, fatherName: text})}
+                value={Userdata.fatherName}
+              />
+            </View>
+            <View style={{ marginVertical: 10 }}>
+              <Text style={styles.heading_modal}>DOB</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Date Of Birth"
+                selectTextOnFocus={false}
+                onChangeText={(text)=> setUserdata({...Userdata, dob: text})}
+                value={Userdata.dob}
+              />
+            </View>
+            <View style={{ marginVertical: 10 }}>
+              <Text style={styles.heading_modal}>Gender</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Gender"
+                selectTextOnFocus={false}
+                onChangeText={(text)=> setUserdata({...Userdata, gender: text})}
+                value={Userdata.gender}
+              />
+            </View>
+            <View style={{ marginVertical: 10 }}>
+              <Text style={styles.heading_modal}>Email ID</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="email address"
+                selectTextOnFocus={false}
+                onChangeText={(text)=> setUserdata({...Userdata, email: text})}
+                value={Userdata.email}
+              />
+            </View>
+            <View style={{ marginVertical: 10 }}>
+              <Text style={styles.heading_modal}>Phone Number</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Phone Number"
+                selectTextOnFocus={false}
+                onChangeText={(text)=> setUserdata({...Userdata, phone: text})}
+                value={Userdata.phone}
+              />
+            </View>
+            {/* <View style={{ marginVertical: 10 }}>
+              <Text style={styles.heading_modal}>Local Address</Text>
+              <TextInput
+                multiline
+                style={[styles.input, { height: 60 }]}
+                placeholder="Local Address"
+                selectTextOnFocus={false}
+                onChangeText={(text)=> setUserdata({...Userdata, location: text})}
+                value={Userdata.location}
+              />
+            </View> */}
+            <View style={{ marginVertical: 10 }}>
+              <Text style={styles.heading_modal}>Permanent Address</Text>
+              <TextInput
+                multiline
+                style={[styles.input, { height: 60 }]}
+                placeholder="Permanent Address"
+                selectTextOnFocus={false}
+                onChangeText={(text)=> setUserdata({...Userdata, permanentAddress: text})}
+                value={Userdata.permanentAddress}
               />
             </View>
           </View>
-          <View style={{marginVertical: 10}}>
-            <Text style={styles.heading_modal}>Father's Name</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Father's Name"
-              editable={false}
-              selectTextOnFocus={false}
-              value={Userdata.fatherName}
-            />
-          </View>
-          <View style={{marginVertical: 10}}>
-            <Text style={styles.heading_modal}>DOB</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Date Of Birth"
-              editable={false}
-              selectTextOnFocus={false}
-              value={Userdata.dob}
-            />
-          </View>
-          <View style={{marginVertical: 10}}>
-            <Text style={styles.heading_modal}>Gender</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Gender"
-              editable={false}
-              selectTextOnFocus={false}
-              value={Userdata.gender}
-            />
-          </View>
-          <View style={{marginVertical: 10}}>
-            <Text style={styles.heading_modal}>Email ID</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="email address"
-              editable={false}
-              selectTextOnFocus={false}
-              value={Userdata.email}
-            />
-          </View>
-          <View style={{marginVertical: 10}}>
-            <Text style={styles.heading_modal}>Phone Number</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Phone Number"
-              editable={false}
-              selectTextOnFocus={false}
-              value={Userdata.phone}
-            />
-          </View>
-          <View style={{marginVertical: 10}}>
-            <Text style={styles.heading_modal}>Local Address</Text>
-            <TextInput
-              multiline
-              style={[styles.input, {height: 60}]}
-              placeholder="Local Address"
-              editable={false}
-              selectTextOnFocus={false}
-              value={Userdata.permanentAddress}
-            />
-          </View>
-          <View style={{marginVertical: 10}}>
-            <Text style={styles.heading_modal}>Permanent Address</Text>
-            <TextInput
-              multiline
-              style={[styles.input, {height: 60}]}
-              placeholder="Permanent Address"
-              editable={false}
-              selectTextOnFocus={false}
-              value={Userdata.permanentAddress}
-            />
-          </View>
-        </View>
+          <TouchableOpacity onPress={() => EditProfile()} style={{ flex: 1, alignSelf:"center", backgroundColor: "blue", padding:10, borderRadius:5 }}>
+            <Text style={{ textAlign: "center", color: "#fff" }}>Submit</Text>
+          </TouchableOpacity>
+        </>
       );
     } else if (show == 'CompanyDetails') {
       return (
         <View>
-          <View style={{marginVertical: 10}}>
+          <View style={{ marginVertical: 10 }}>
             <Text style={styles.heading_modal}>Employee Number</Text>
             <TextInput
               style={styles.input}
@@ -449,7 +489,7 @@ function CustomDrawerContent(props) {
               value={Userdata.EMPLOYEE_NUMBER}
             />
           </View>
-          <View style={{marginVertical: 10}}>
+          <View style={{ marginVertical: 10 }}>
             <Text style={styles.heading_modal}>Department</Text>
             <TextInput
               style={styles.input}
@@ -459,7 +499,7 @@ function CustomDrawerContent(props) {
               value={Userdata.department}
             />
           </View>
-          <View style={{marginVertical: 10}}>
+          <View style={{ marginVertical: 10 }}>
             <Text style={styles.heading_modal}>Date of Joining</Text>
             <TextInput
               style={styles.input}
@@ -469,7 +509,7 @@ function CustomDrawerContent(props) {
               value={Userdata.joining_date}
             />
           </View>
-          <View style={{marginVertical: 10}}>
+          <View style={{ marginVertical: 10 }}>
             <Text style={styles.heading_modal}>Status</Text>
             <TextInput
               style={styles.input}
@@ -479,7 +519,7 @@ function CustomDrawerContent(props) {
               value={Userdata.status ? 'active' : 'inactive'}
             />
           </View>
-          <View style={{marginVertical: 10}}>
+          <View style={{ marginVertical: 10 }}>
             <Text style={styles.heading_modal}>Salary</Text>
             <TextInput
               style={styles.input}
@@ -496,120 +536,120 @@ function CustomDrawerContent(props) {
         <View>
           {location
             ? location.map(
-                (i, index) =>
-                  i.location_id != 209 && (
-                    <TouchableOpacity
-                      Key={index}
-                      onPress={() =>
-                        makeActive(i.location_id, i.location_name, i.address1)
-                      }
+              (i, index) =>
+                i.location_id != 209 && (
+                  <TouchableOpacity
+                    Key={index}
+                    onPress={() =>
+                      makeActive(i.location_id, i.location_name, i.address1)
+                    }
+                    style={{
+                      marginTop: index > 0 ? 20 : 10,
+                      padding: 10,
+                      borderWidth: 1,
+                      borderRadius: 5,
+                      borderColor: 'grey',
+                    }}>
+                    <View
                       style={{
-                        marginTop: index > 0 ? 20 : 10,
-                        padding: 10,
-                        borderWidth: 1,
-                        borderRadius: 5,
-                        borderColor: 'grey',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
                       }}>
                       <View
                         style={{
                           flexDirection: 'row',
-                          justifyContent: 'space-between',
                         }}>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                          }}>
-                          <Entypo
-                            name="location-pin"
-                            size={18}
-                            style={{marginRight: 3, color: '#cd181f'}}
-                          />
-                          <View>
-                            <Text style={{fontSize: 16, fontWeight: '500'}}>
-                              {i.location_name}
-                            </Text>
-                            <Text
-                              style={{
-                                marginTop: 3,
-                                color: 'grey',
-                                width: width / 1.5,
-                              }}>
-                              {i.address1}
-                            </Text>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                marginTop: 15,
-                              }}>
-                              <TouchableOpacity
-                                style={{marginRight: 20}}
-                                onPress={() => delete_address(i.location_id)}>
-                                <Text
-                                  style={{
-                                    color: GlobalStyle.blueDark,
-                                    fontWeight: 'bold',
-                                    fontSize: 16,
-                                  }}>
-                                  Delete
-                                </Text>
-                              </TouchableOpacity>
-                              <TouchableOpacity
-                                style={{}}
-                                onPress={() => {
-                                  setshowInput(true),
-                                    setshowUpdate(true),
-                                    setupdateId(i.location_id);
-                                  setaddressTitle(i.location_name);
-                                  setaddress(i.address1);
+                        <Entypo
+                          name="location-pin"
+                          size={18}
+                          style={{ marginRight: 3, color: '#cd181f' }}
+                        />
+                        <View>
+                          <Text style={{ fontSize: 16, fontWeight: '500' }}>
+                            {i.location_name}
+                          </Text>
+                          <Text
+                            style={{
+                              marginTop: 3,
+                              color: 'grey',
+                              width: width / 1.5,
+                            }}>
+                            {i.address1}
+                          </Text>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              marginTop: 15,
+                            }}>
+                            <TouchableOpacity
+                              style={{ marginRight: 20 }}
+                              onPress={() => delete_address(i.location_id)}>
+                              <Text
+                                style={{
+                                  color: GlobalStyle.blueDark,
+                                  fontWeight: 'bold',
+                                  fontSize: 16,
                                 }}>
-                                <Text
-                                  style={{
-                                    color: GlobalStyle.blueDark,
-                                    fontWeight: 'bold',
-                                    fontSize: 16,
-                                  }}>
-                                  Edit
-                                </Text>
-                              </TouchableOpacity>
-                            </View>
+                                Delete
+                              </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              style={{}}
+                              onPress={() => {
+                                setshowInput(true),
+                                  setshowUpdate(true),
+                                  setupdateId(i.location_id);
+                                setaddressTitle(i.location_name);
+                                setaddress(i.address1);
+                              }}>
+                              <Text
+                                style={{
+                                  color: GlobalStyle.blueDark,
+                                  fontWeight: 'bold',
+                                  fontSize: 16,
+                                }}>
+                                Edit
+                              </Text>
+                            </TouchableOpacity>
                           </View>
                         </View>
-                        {i.active_status == 1 ? (
-                          <Fontisto
-                            name="checkbox-active"
-                            size={17}
-                            style={{marginRight: 3, color: '#0e664e'}}
-                          />
-                        ) : (
-                          <Fontisto
-                            onPress={() =>
-                              makeActive(
-                                i.location_id,
-                                i.location_name,
-                                i.address1,
-                              )
-                            }
-                            name="checkbox-passive"
-                            size={17}
-                            style={{
-                              marginRight: 3,
-                              color: '#cd181f',
-                              // position: 'absolute',
-                              // left: 0,
-                            }}
-                          />
-                        )}
                       </View>
-                    </TouchableOpacity>
-                  ),
-              )
+                      {i.active_status == 1 ? (
+                        <Fontisto
+                          name="checkbox-active"
+                          size={17}
+                          style={{ marginRight: 3, color: '#0e664e' }}
+                        />
+                      ) : (
+                        <Fontisto
+                          onPress={() =>
+                            makeActive(
+                              i.location_id,
+                              i.location_name,
+                              i.address1,
+                            )
+                          }
+                          name="checkbox-passive"
+                          size={17}
+                          style={{
+                            marginRight: 3,
+                            color: '#cd181f',
+                            // position: 'absolute',
+                            // left: 0,
+                          }}
+                        />
+                      )}
+                    </View>
+                  </TouchableOpacity>
+                ),
+            )
             : null}
           {showInput ? (
-            <View style={{marginTop: 20}}>
+            <View style={{ marginTop: 20 }}>
               <View
-                style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text style={{fontSize: 20, fontWeight: '600'}}>
+                style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={{ fontSize: 20, fontWeight: '600' }}>
                   Add / Update Address
                 </Text>
                 <AntDesign
@@ -618,7 +658,7 @@ function CustomDrawerContent(props) {
                   }}
                   name="closecircle"
                   size={18}
-                  style={{marginRight: 3, color: 'red'}}
+                  style={{ marginRight: 3, color: 'red' }}
                 />
               </View>
 
@@ -644,9 +684,9 @@ function CustomDrawerContent(props) {
             showUpdate ? (
               <TouchableOpacity
                 onPress={() => update_address(updateId)}
-                style={[styles.btnStyle, {width: '100%', marginTop: 20}]}>
+                style={[styles.btnStyle, { width: '100%', marginTop: 20 }]}>
                 <Text
-                  style={{color: 'white', fontWeight: 'bold', marginRight: 5}}>
+                  style={{ color: 'white', fontWeight: 'bold', marginRight: 5 }}>
                   Update
                 </Text>
                 {loading ? <ActivityIndicator color="white" /> : null}
@@ -654,9 +694,9 @@ function CustomDrawerContent(props) {
             ) : (
               <TouchableOpacity
                 onPress={add_address}
-                style={[styles.btnStyle, {width: '100%', marginTop: 20}]}>
+                style={[styles.btnStyle, { width: '100%', marginTop: 20 }]}>
                 <Text
-                  style={{color: 'white', fontWeight: 'bold', marginRight: 5}}>
+                  style={{ color: 'white', fontWeight: 'bold', marginRight: 5 }}>
                   Submit
                 </Text>
                 {loading ? <ActivityIndicator color="white" /> : null}
@@ -673,8 +713,8 @@ function CustomDrawerContent(props) {
                   'Please add address by physically being present at that address',
                 );
               }}
-              style={[styles.btnStyle, {width: '100%', marginTop: 20}]}>
-              <Text style={{color: 'white', fontWeight: 'bold'}}>
+              style={[styles.btnStyle, { width: '100%', marginTop: 20 }]}>
+              <Text style={{ color: 'white', fontWeight: 'bold' }}>
                 Add new address
               </Text>
             </TouchableOpacity>
@@ -693,15 +733,15 @@ function CustomDrawerContent(props) {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <DrawerContentScrollView {...props}>
         <ImageBackground
           source={require('../src/images/drawer-bg-img.webp')}
-          style={{padding: 10, marginBottom: 8}}>
+          style={{ padding: 10, marginBottom: 8 }}>
           <Image
             source={
               Userdata.image
-                ? {uri: Userdata.image}
+                ? { uri: Userdata.image }
                 : require('../src/images/profile.jpeg')
             }
             resizeMode="cover"
@@ -713,18 +753,18 @@ function CustomDrawerContent(props) {
               borderColor: 'white',
             }}
           />
-          <View style={{marginTop: 5}}>
+          <View style={{ marginTop: 5 }}>
             <Text
-              style={[styles.profileFont, {fontSize: 20, fontWeight: 'bold'}]}>
+              style={[styles.profileFont, { fontSize: 20, fontWeight: 'bold' }]}>
               {Userdata.name}
             </Text>
 
-            <View style={{flexDirection: 'row'}}>
+            <View style={{ flexDirection: 'row' }}>
               <Zocial
                 name="email"
                 size={17}
                 color="white"
-                style={{marginRight: 5}}
+                style={{ marginRight: 5 }}
               />
               <Text style={styles.profileFont}>{Userdata.email}</Text>
             </View>
@@ -743,7 +783,7 @@ function CustomDrawerContent(props) {
           onPress={() => handleItemPress('PersonalDetails')}
           style={
             isItemActive('PersonalDetails')
-              ? {backgroundColor: '#F5F5F5'}
+              ? { backgroundColor: '#F5F5F5' }
               : null
           }
           activeTintColor={'red'}
@@ -759,7 +799,7 @@ function CustomDrawerContent(props) {
           )}
           onPress={() => handleItemPress('CompanyDetails')}
           style={
-            isItemActive('CompanyDetails') ? {backgroundColor: '#F5F5F5'} : null
+            isItemActive('CompanyDetails') ? { backgroundColor: '#F5F5F5' } : null
           }
           activeTintColor={'red'}
         />
@@ -768,7 +808,7 @@ function CustomDrawerContent(props) {
           icon={color => <Feather name="map-pin" size={18} color={color} />}
           onPress={() => handleItemPress('OfficeAddress')}
           style={
-            isItemActive('OfficeAddress') ? {backgroundColor: '#F5F5F5'} : null
+            isItemActive('OfficeAddress') ? { backgroundColor: '#F5F5F5' } : null
           }
           activeTintColor={'red'}
         />
@@ -783,27 +823,27 @@ function CustomDrawerContent(props) {
                 onPress: () => setActiveItem(''),
                 style: 'cancel',
               },
-              {text: 'OK', onPress: () => logout()},
+              { text: 'OK', onPress: () => logout() },
             ]);
           }}
-          style={isItemActive('Logout') ? {backgroundColor: '#F5F5F5'} : null}
+          style={isItemActive('Logout') ? { backgroundColor: '#F5F5F5' } : null}
         />
       </DrawerContentScrollView>
       <Modal
         visible={isModalVisible}
         animationType="slide"
         onRequestClose={handleModalClose}>
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <Text>This is a modal!</Text>
           <TouchableOpacity onPress={handleModalClose}>
-            <Text style={{color: 'red', marginTop: 16}}>Close Modal</Text>
+            <Text style={{ color: 'red', marginTop: 16 }}>Close Modal</Text>
           </TouchableOpacity>
         </View>
       </Modal>
       <Modal animationType="slide" transparent={true} visible={modalVisible}>
         <View style={styles.centeredView}>
           <View style={[styles.modalView]}>
-            <View style={{alignItems: 'flex-end'}}>
+            <View style={{ alignItems: 'flex-end' }}>
               <AntDesign
                 name="close"
                 size={22}
@@ -812,7 +852,7 @@ function CustomDrawerContent(props) {
                 }}
                 color="red"
                 onPress={() => handleItemPress('')}
-                // onPress={() => setModalVisible(!modalVisible)}
+              // onPress={() => setModalVisible(!modalVisible)}
               />
             </View>
             <ScrollView>{renderDetails(show)}</ScrollView>
@@ -824,7 +864,7 @@ function CustomDrawerContent(props) {
 }
 
 function ProfileDrawer() {
-  const {showDrawerHeader} = useContext(EssContext);
+  const { showDrawerHeader } = useContext(EssContext);
 
   return (
     <Drawer.Navigator
@@ -832,7 +872,7 @@ function ProfileDrawer() {
       <Drawer.Screen
         options={{
           headerShown: showDrawerHeader,
-          drawerIcon: ({color, size}) => (
+          drawerIcon: ({ color, size }) => (
             <AntDesign name="user" size={size} color={color} />
           ), // set the icon component
         }}
@@ -871,10 +911,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#d3e3fd30',
     borderColor: '#0c57d0',
   },
-  heading: {fontWeight: '500', fontSize: 15},
-  heading_grey: {fontSize: 14, color: 'grey', fontWeight: '300'},
-  add_txt: {fontSize: 14, color: '#efad37', fontWeight: '600'},
-  view_txt: {color: GlobalStyle.blueDark, fontWeight: 'bold'},
+  heading: { fontWeight: '500', fontSize: 15 },
+  heading_grey: { fontSize: 14, color: 'grey', fontWeight: '300' },
+  add_txt: { fontSize: 14, color: '#efad37', fontWeight: '600' },
+  view_txt: { color: GlobalStyle.blueDark, fontWeight: 'bold' },
   centeredView: {
     flex: 1,
     justifyContent: 'center',
@@ -917,8 +957,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
   },
-  input_title: {marginBottom: 3, fontSize: 14, fontWeight: '500'},
-  input_top_margin: {marginTop: 15},
+  input_title: { marginBottom: 3, fontSize: 14, fontWeight: '500' },
+  input_top_margin: { marginTop: 15 },
   input: {
     height: 45,
     backgroundColor: 'white',
@@ -963,8 +1003,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  bottomsheetTxt: {fontSize: 17},
-  bottomsheetLogo: {fontSize: 22, marginRight: 15},
+  bottomsheetTxt: { fontSize: 17 },
+  bottomsheetLogo: { fontSize: 22, marginRight: 15 },
   bottomsheetBtn: {
     flexDirection: 'row',
     alignItems: 'center',

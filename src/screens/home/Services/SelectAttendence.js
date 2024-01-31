@@ -118,7 +118,7 @@ const SelectAttendence = () => {
             alert(e);
           }
         } else {
-          alert(response.data.message);
+          // alert(response.data.message);
         }
       })
       .catch(error => {
@@ -148,8 +148,6 @@ const SelectAttendence = () => {
             />
           </TouchableOpacity>
           <DatePicker
-            textColor="#000000"
-            backgroundColor="#FFFFFF"
             modal
             textColor="#000000"
             backgroundColor="#FFFFFF"
@@ -180,8 +178,6 @@ const SelectAttendence = () => {
             />
           </TouchableOpacity>
           <DatePicker
-            textColor="#000000"
-            backgroundColor="#FFFFFF"
             modal
             textColor="#000000"
             backgroundColor="#FFFFFF"
@@ -207,7 +203,7 @@ const SelectAttendence = () => {
               fontSize: 15,
               marginRight: 10,
             }}>
-            Get Attendence
+            Get Attendance
           </Text>
           {loading ? <ActivityIndicator /> : null}
         </TouchableOpacity>

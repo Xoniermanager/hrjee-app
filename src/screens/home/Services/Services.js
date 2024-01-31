@@ -7,8 +7,8 @@ const Services = ({navigation}) => {
   return (
     <View style={{flex: 1, padding: 15, backgroundColor: 'white'}}>
       <Button
-        label={'Attendence'}
-        onPress={() => navigation.navigate('Select Attendence')}
+        label={'Attendance'}
+        onPress={() => navigation.navigate('Select Attendance')}
       />
       <Button
         label={'Leave'}

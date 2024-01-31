@@ -450,7 +450,7 @@ const Home = ({ navigation }) => {
             longitude: activeLocation.longitude,
           },
         );
-        if (dis <= 1000) {
+        if (dis <= 4000) {
           const token = await AsyncStorage.getItem('Token');
           const config = {
             headers: { Token: token },
@@ -499,7 +499,9 @@ const Home = ({ navigation }) => {
       .then(async location => {
         var lat = parseFloat(location.latitude);
         var long = parseFloat(location.longitude);
-        // console.log('loc-->', lat, long);
+        console.log('loc1-->', location);
+        console.log('loc2-->', lat);
+        console.log('loc3-->', long);
         setcurrentLocation({
           long: long,
           lat: lat,
@@ -541,7 +543,8 @@ const Home = ({ navigation }) => {
           activeLocation.longitude,
         );
         console.log('curr loc->', lat, long);
-        if (dis <= 1000) {
+
+        if (dis <= 4000) {
           const token = await AsyncStorage.getItem('Token');
           const userData = await AsyncStorage.getItem('UserData');
           const userInfo = JSON.parse(userData);
@@ -847,7 +850,7 @@ const Home = ({ navigation }) => {
                 E-Attendance
               </Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('Select Attendence')}>
+                onPress={() => navigation.navigate('Select Attendance')}>
                 <Text style={styles.purple_txt}>View History</Text>
               </TouchableOpacity>
             </View>

@@ -120,7 +120,7 @@ function MyStack() {
               <Stack.Screen name="LeavePolicy" component={LeavePolicy} />
               <Stack.Screen name="Details" component={Details} />
               <Stack.Screen
-                name="Select Attendence"
+                name="Select Attendance"
                 component={SelectAttendence}
               />
               <Stack.Screen name="Applied Leaves" component={LeaveList} />
@@ -235,7 +235,7 @@ function MyStack() {
                 name="home"
                 component={Home}
               />
-              <Stack.Screen name="Attendence" component={Attendence} />
+              <Stack.Screen name="Attendance" component={Attendence} />
               <Stack.Screen name="News" component={News} />
               <Stack.Screen name="Policies" component={Policies} />
               <Stack.Screen name="Services" component={Services} />
@@ -244,7 +244,7 @@ function MyStack() {
               <Stack.Screen name="LeavePolicy" component={LeavePolicy} />
               <Stack.Screen name="Details" component={Details} />
               <Stack.Screen
-                name="Select Attendence"
+                name="Select Attendance"
                 component={SelectAttendence}
               />
               <Stack.Screen name="Applied Leaves" component={LeaveList} />
