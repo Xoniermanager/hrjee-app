@@ -74,6 +74,11 @@ const Home = ({ navigation }) => {
   const [timerOn, settimerOn] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
+  const [Userdata, setUserdata] = useState({
+    image: '',
+    name: '',
+  });
+
   const monthNames = [
     'Jan',
     'Feb',
@@ -103,6 +108,7 @@ const Home = ({ navigation }) => {
   useEffect(() => {
     const getData = async () => {
       AsyncStorage.getItem('UserData').then(res => {
+        console.log("imageresponse..............", res)
         setuser1(JSON.parse(res));
         setuser(JSON.parse(res));
       });
@@ -155,6 +161,7 @@ const Home = ({ navigation }) => {
       check_punchIn();
       get_training();
       get_announcement();
+      ProfileDetails()
     }, []),
   );
 
@@ -807,6 +814,33 @@ const Home = ({ navigation }) => {
     </TouchableOpacity>
   );
 
+  const ProfileDetails = async () => {
+    const token = await AsyncStorage.getItem('Token');
+    const config = {
+      headers: { Token: token },
+    };
+    axios
+      .post(`${apiUrl}/api/get_employee_detail`, {}, config)
+      .then(response => {
+        if (response.data.status === 1) {
+          try {
+            setUserdata({
+              name: response.data.data.FULL_NAME,
+              image: response.data.data.image,
+            });
+            get_employee_detail();
+          } catch (e) {
+            console.log(e);
+          }
+        } else {
+          console.log('some error occured');
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
       <PullToRefresh onRefresh={handleRefresh}>
@@ -825,8 +859,8 @@ const Home = ({ navigation }) => {
               style={styles.tinyLogo}
               // source={require('../../images/profile_pic.webp')}
               source={
-                user?.image
-                  ? { uri: user.image }
+                Userdata?.image
+                  ? { uri: Userdata.image }
                   : require('../../images/profile_pic.webp')
               }
             />

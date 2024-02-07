@@ -21,23 +21,23 @@ import React, {
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {useFocusEffect} from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import useApi from '../../../api/useApi';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import post from '../../../api/post';
-import {EssContext} from '../../../Context/EssContext';
-const {width} = Dimensions.get('window');
+import { EssContext } from '../../../Context/EssContext';
+const { width } = Dimensions.get('window');
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DocumentPicker from 'react-native-document-picker';
-import BottomSheet, {BottomSheetFlatList} from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import apiUrl from '../../reusable/apiUrl';
 import VideoPlayer from 'react-native-video-player';
 import useApi2 from '../../../api/useApi2';
 import PullToRefresh from '../../reusable/PullToRefresh';
 
-const SinglePost = ({navigation, route}) => {
-  const {user, setShowDrawerHeader} = useContext(EssContext);
+const SinglePost = ({ navigation, route }) => {
+  const { user, setShowDrawerHeader } = useContext(EssContext);
   setShowDrawerHeader(false);
   const post_id = route.params.post_id;
   const get_post_details_api = useApi(post.get_post_details);
@@ -98,7 +98,7 @@ const SinglePost = ({navigation, route}) => {
       if (get_post_details_api.data?.repost_msg == null) {
         setcaption(get_post_details_api.data?.data?.title);
         setSingleFile([
-          {name: get_post_details_api.data?.data?.post.split('/').reverse()[0]},
+          { name: get_post_details_api.data?.data?.post.split('/').reverse()[0] },
         ]);
       } else {
         setcaption(get_post_details_api.data?.data?.repost_msg);
@@ -110,7 +110,7 @@ const SinglePost = ({navigation, route}) => {
   const get_post_details = async () => {
     const token = await AsyncStorage.getItem('Token');
     const config = {
-      headers: {Token: token},
+      headers: { Token: token },
     };
     get_post_details_api.request(
       {
@@ -125,7 +125,7 @@ const SinglePost = ({navigation, route}) => {
     console.log('first');
     const token = await AsyncStorage.getItem('Token');
     const config = {
-      headers: {Token: token},
+      headers: { Token: token },
     };
     like_post_api.request(
       {
@@ -140,7 +140,7 @@ const SinglePost = ({navigation, route}) => {
     console.log('first');
     const token = await AsyncStorage.getItem('Token');
     const config = {
-      headers: {Token: token},
+      headers: { Token: token },
     };
     dislike_post_api.request(
       {
@@ -155,7 +155,7 @@ const SinglePost = ({navigation, route}) => {
     // console.log('comment info--->', user.userid, commentinfo.id, id);
     const token = await AsyncStorage.getItem('Token');
     const config = {
-      headers: {Token: token},
+      headers: { Token: token },
     };
     like_comment_api.request(
       {
@@ -171,7 +171,7 @@ const SinglePost = ({navigation, route}) => {
   const dislike_comment = async id => {
     const token = await AsyncStorage.getItem('Token');
     const config = {
-      headers: {Token: token},
+      headers: { Token: token },
     };
     dislike_comment_api.request(
       {
@@ -187,19 +187,19 @@ const SinglePost = ({navigation, route}) => {
   const add_comment = async id => {
     const token = await AsyncStorage.getItem('Token');
     const config = {
-      headers: {Token: token},
+      headers: { Token: token },
     };
     comment
       ? add_comment_api.request(
-          {
-            user_id: route.params.user_id,
-            cmp_id: route.params.cmp_id,
-            post_id: route.params.post_id,
-            comment: comment,
-            created_by: user.userid,
-          },
-          config,
-        )
+        {
+          user_id: route.params.user_id,
+          cmp_id: route.params.cmp_id,
+          post_id: route.params.post_id,
+          comment: comment,
+          created_by: user.userid,
+        },
+        config,
+      )
       : alert('write a comment!');
     setcomment('');
   };
@@ -208,7 +208,7 @@ const SinglePost = ({navigation, route}) => {
     console.log('first');
     const token = await AsyncStorage.getItem('Token');
     const config = {
-      headers: {Token: token},
+      headers: { Token: token },
     };
     delete_post_api.request(
       {
@@ -222,7 +222,7 @@ const SinglePost = ({navigation, route}) => {
   const delete_comment = async id => {
     const token = await AsyncStorage.getItem('Token');
     const config = {
-      headers: {Token: token},
+      headers: { Token: token },
     };
     delete_comment_api.request(
       {
@@ -282,7 +282,7 @@ const SinglePost = ({navigation, route}) => {
     setloading(true);
     const token = await AsyncStorage.getItem('Token');
     const config = {
-      headers: {Token: token},
+      headers: { Token: token },
     };
 
     const body = {
@@ -355,17 +355,17 @@ const SinglePost = ({navigation, route}) => {
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: 'white'}}>
+    <View style={{ flex: 1, backgroundColor: 'white' }}>
       <Modal
         animationType="slide"
         transparent={true}
         visible={modalVisibleImgUp}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <View style={{alignItems: 'flex-end'}}>
+            <View style={{ alignItems: 'flex-end' }}>
               <AntDesign
                 name="close"
-                style={{fontSize: 20, color: 'red'}}
+                style={{ fontSize: 20, color: 'red' }}
                 onPress={() => setModalVisibleImgUp(!modalVisibleImgUp)}
               />
             </View>
@@ -385,7 +385,7 @@ const SinglePost = ({navigation, route}) => {
                     <Text>{singleFile ? singleFile[0]?.name : null}</Text>
                     <Feather
                       name="delete"
-                      style={{fontSize: 20, color: 'red', marginLeft: 10}}
+                      style={{ fontSize: 20, color: 'red', marginLeft: 10 }}
                       onPress={() => {
                         setSingleFile(null);
                         setshowUpdate(true);
@@ -403,7 +403,7 @@ const SinglePost = ({navigation, route}) => {
                   }}>
                   <AntDesign
                     name="cloudupload"
-                    style={{fontSize: 20, marginRight: 10}}
+                    style={{ fontSize: 20, marginRight: 10 }}
                   />
                   <Text>Upload</Text>
                 </TouchableOpacity>
@@ -446,18 +446,18 @@ const SinglePost = ({navigation, route}) => {
             <View>
               {get_post_details_api.data?.data?.repost_by == null ? (
                 <View>
-                  <View style={{padding: 10}}>
+                  <View style={{ padding: 10 }}>
                     <View style={styles.separator}>
                       <View
-                        style={{flexDirection: 'row', alignItems: 'center'}}>
+                        style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Image
                           style={styles.tinyLogo}
                           source={{
                             uri: get_post_details_api.data?.data?.profile_image,
                           }}
                         />
-                        <View style={{marginLeft: 10}}>
-                          <Text style={{fontSize: 16, fontWeight: 'bold'}}>
+                        <View style={{ marginLeft: 10 }}>
+                          <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
                             {get_post_details_api.data?.data?.name}
                           </Text>
                           <Text style={styles.lightTxt}>
@@ -485,7 +485,7 @@ const SinglePost = ({navigation, route}) => {
                       )} */}
                     </View>
                     {get_post_details_api.data?.data?.title && (
-                      <Text style={{marginTop: 10}}>
+                      <Text style={{ marginTop: 10 }}>
                         {get_post_details_api.data?.data?.title}
                       </Text>
                     )}
@@ -507,10 +507,10 @@ const SinglePost = ({navigation, route}) => {
                   ) : (
                     <Image
                       style={styles.post}
-                      source={{uri: get_post_details_api.data?.data?.post}}
+                      source={{ uri: get_post_details_api.data?.data?.post }}
                     />
                   )}
-                  <View style={{padding: 10}}>
+                  <View style={{ padding: 10 }}>
                     <View
                       style={[
                         styles.separator,
@@ -526,7 +526,7 @@ const SinglePost = ({navigation, route}) => {
                           name="like1"
                           size={15}
                           color="#388aebff"
-                          style={{marginRight: 5}}
+                          style={{ marginRight: 5 }}
                         />
                         <Text style={styles.lightTxt}>
                           {get_post_details_api.data?.data?.post_like} Likes
@@ -557,7 +557,7 @@ const SinglePost = ({navigation, route}) => {
                             name="like1"
                             size={20}
                             color="#388aebff"
-                            style={{marginRight: 5}}
+                            style={{ marginRight: 5 }}
                           />
                           <Text style={styles.likeTxt}>Like</Text>
                         </TouchableOpacity>
@@ -570,7 +570,7 @@ const SinglePost = ({navigation, route}) => {
                           <AntDesign
                             name="like2"
                             size={20}
-                            style={{marginRight: 5}}
+                            style={{ marginRight: 5 }}
                           />
                           <Text style={styles.likeTxt}>Like</Text>
                         </TouchableOpacity>
@@ -580,7 +580,7 @@ const SinglePost = ({navigation, route}) => {
                         <MaterialCommunityIcons
                           name="comment-outline"
                           size={20}
-                          style={{marginRight: 5}}
+                          style={{ marginRight: 5 }}
                         />
                         <Text style={styles.likeTxt}>Comment</Text>
                       </TouchableOpacity>
@@ -589,10 +589,10 @@ const SinglePost = ({navigation, route}) => {
                 </View>
               ) : (
                 <View style={{}}>
-                  <View style={{padding: 10}}>
+                  <View style={{ padding: 10 }}>
                     <View style={styles.separator}>
                       <View
-                        style={{flexDirection: 'row', alignItems: 'center'}}>
+                        style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Image
                           style={styles.tinyLogo}
                           source={{
@@ -600,8 +600,8 @@ const SinglePost = ({navigation, route}) => {
                               ?.image,
                           }}
                         />
-                        <View style={{marginLeft: 10}}>
-                          <Text style={{fontSize: 16, fontWeight: 'bold'}}>
+                        <View style={{ marginLeft: 10 }}>
+                          <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
                             {get_post_details_api.data?.data?.repost_user?.name}
                           </Text>
                           <Text style={styles.lightTxt}>
@@ -635,7 +635,7 @@ const SinglePost = ({navigation, route}) => {
                       )} */}
                     </View>
                     {get_post_details_api.data?.data?.repost_msg && (
-                      <Text style={{marginTop: 10}}>
+                      <Text style={{ marginTop: 10 }}>
                         {get_post_details_api.data?.data?.repost_msg}
                       </Text>
                     )}
@@ -648,22 +648,22 @@ const SinglePost = ({navigation, route}) => {
                       marginTop: 0,
                       margin: 10,
                     }}>
-                    <View style={{padding: 10}}>
+                    <View style={{ padding: 10 }}>
                       <View
-                        style={{flexDirection: 'row', alignItems: 'center'}}>
+                        style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <Image
-                          style={[styles.tinyLogo, {marginRight: 5}]}
+                          style={[styles.tinyLogo, { marginRight: 5 }]}
                           source={
                             get_post_details_api.data?.data?.profile_image
                               ? {
-                                  uri: get_post_details_api.data?.data
-                                    ?.profile_image,
-                                }
+                                uri: get_post_details_api.data?.data
+                                  ?.profile_image,
+                              }
                               : require('../../images/profile_pic.webp')
                           }
                         />
                         <View>
-                          <Text style={{fontSize: 15, fontWeight: '600'}}>
+                          <Text style={{ fontSize: 15, fontWeight: '600' }}>
                             {get_post_details_api.data?.data?.name}
                           </Text>
                           <Text
@@ -680,7 +680,7 @@ const SinglePost = ({navigation, route}) => {
                           </Text>
                         </View>
                       </View>
-                      <Text style={{marginVertical: 5}}>
+                      <Text style={{ marginVertical: 5 }}>
                         {get_post_details_api.data?.data?.title}
                       </Text>
                     </View>
@@ -703,14 +703,14 @@ const SinglePost = ({navigation, route}) => {
                           style={styles.post}
                           source={
                             get_post_details_api.data?.data?.post
-                              ? {uri: get_post_details_api.data?.data?.post}
+                              ? { uri: get_post_details_api.data?.data?.post }
                               : require('../../images/image_error.png')
                           }
                         />
                       )}
                     </View>
                   </View>
-                  <View style={{padding: 10}}>
+                  <View style={{ padding: 10 }}>
                     <View
                       style={[
                         styles.separator,
@@ -726,7 +726,7 @@ const SinglePost = ({navigation, route}) => {
                           name="like1"
                           size={15}
                           color="#388aebff"
-                          style={{marginRight: 5}}
+                          style={{ marginRight: 5 }}
                         />
                         <Text style={styles.lightTxt}>
                           {get_post_details_api.data?.data?.post_like} Likes
@@ -757,7 +757,7 @@ const SinglePost = ({navigation, route}) => {
                             name="like1"
                             size={20}
                             color="#388aebff"
-                            style={{marginRight: 5}}
+                            style={{ marginRight: 5 }}
                           />
                           <Text style={styles.likeTxt}>Like</Text>
                         </TouchableOpacity>
@@ -770,7 +770,7 @@ const SinglePost = ({navigation, route}) => {
                           <AntDesign
                             name="like2"
                             size={20}
-                            style={{marginRight: 5}}
+                            style={{ marginRight: 5 }}
                           />
                           <Text style={styles.likeTxt}>Like</Text>
                         </TouchableOpacity>
@@ -780,7 +780,7 @@ const SinglePost = ({navigation, route}) => {
                         <MaterialCommunityIcons
                           name="comment-outline"
                           size={20}
-                          style={{marginRight: 5}}
+                          style={{ marginRight: 5 }}
                         />
                         <Text style={styles.likeTxt}>Comment</Text>
                       </TouchableOpacity>
@@ -788,10 +788,10 @@ const SinglePost = ({navigation, route}) => {
                   </View>
                 </View>
               )}
-              <View style={{padding: 10, marginBottom: 100}}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <View style={{ padding: 10, marginBottom: 100 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <Text>comments</Text>
-                  <AntDesign name="down" size={15} style={{marginLeft: 5}} />
+                  <AntDesign name="down" size={15} style={{ marginLeft: 5 }} />
                 </View>
                 {get_post_details_api.data?.data?.comment &&
                   get_post_details_api.data?.data?.comment.map((i, index) => (
@@ -801,13 +801,13 @@ const SinglePost = ({navigation, route}) => {
                         marginTop: 0,
                         marginBottom:
                           index ==
-                          get_post_details_api.data?.data?.comment.length - 1
+                            get_post_details_api.data?.data?.comment.length - 1
                             ? 70
                             : 0,
                       }}>
                       <TouchableOpacity
                         onLongPress={() => {
-                          setcommentinfo({id: i.id, index: index});
+                          setcommentinfo({ id: i.id, index: index });
                           setbottomSheetCmnt(true);
                           handleExpandPress();
                         }}
@@ -825,9 +825,9 @@ const SinglePost = ({navigation, route}) => {
                           <Image
                             style={[
                               styles.tinyLogo,
-                              {width: 35, height: 35, marginRight: 10},
+                              { width: 35, height: 35, marginRight: 10 },
                             ]}
-                            source={{uri: i.profile_image}}
+                            source={{ uri: i.profile_image }}
                           />
                           <View>
                             <View style={styles.commentTag}>
@@ -846,13 +846,13 @@ const SinglePost = ({navigation, route}) => {
                                 <AntDesign
                                   name="like1"
                                   size={15}
-                                  style={{marginRight: 5, color: '#388aebff'}}
+                                  style={{ marginRight: 5, color: '#388aebff' }}
                                 />
                               ) : (
                                 <AntDesign
                                   name="like1"
                                   size={15}
-                                  style={{marginRight: 5, color: '#00000050'}}
+                                  style={{ marginRight: 5, color: '#00000050' }}
                                 />
                               )}
                               <Text>{i.like_comment}</Text>
@@ -869,7 +869,7 @@ const SinglePost = ({navigation, route}) => {
                       justifyContent: 'center',
                       alignItems: 'center',
                     }}>
-                    <Text style={{fontSize: 17, fontWeight: '500'}}>
+                    <Text style={{ fontSize: 17, fontWeight: '500' }}>
                       No comments yet
                     </Text>
                   </View>
@@ -897,7 +897,7 @@ const SinglePost = ({navigation, route}) => {
         enablePanDownToClose={false}
         onChange={handleSheetChanges}>
         <View style={[styles.contentContainer]}>
-          <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
             <AntDesign
               name="close"
               style={{
@@ -917,9 +917,9 @@ const SinglePost = ({navigation, route}) => {
                 }}>
                 <AntDesign
                   name="edit"
-                  style={{fontSize: 20, marginRight: 15}}
+                  style={{ fontSize: 20, marginRight: 15 }}
                 />
-                <Text style={{fontSize: 18}}>Edit</Text>
+                <Text style={{ fontSize: 18 }}>Edit</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => delete_post(postid)}
@@ -930,13 +930,13 @@ const SinglePost = ({navigation, route}) => {
                 }}>
                 <AntDesign
                   name="delete"
-                  style={{fontSize: 20, marginRight: 15, color: 'red'}}
+                  style={{ fontSize: 20, marginRight: 15, color: 'red' }}
                 />
-                <Text style={{fontSize: 18, color: 'red'}}>Delete</Text>
+                <Text style={{ fontSize: 18, color: 'red' }}>Delete</Text>
               </TouchableOpacity>
             </>
           ) : get_post_details_api.data?.data?.comment[commentinfo?.index]
-              ?.comment_by == user.userid ||
+            ?.comment_by == user.userid ||
             get_post_details_api.data?.data?.id == user.userid ? (
             <>
               {get_post_details_api.data?.data?.comment[commentinfo?.index] &&
@@ -954,9 +954,9 @@ const SinglePost = ({navigation, route}) => {
                       name="like1"
                       size={20}
                       color="#388aebff"
-                      style={{marginRight: 15}}
+                      style={{ marginRight: 15 }}
                     />
-                    <Text style={{fontSize: 18}}>Dislike</Text>
+                    <Text style={{ fontSize: 18 }}>Dislike</Text>
                   </TouchableOpacity>
                 )}
 
@@ -974,11 +974,13 @@ const SinglePost = ({navigation, route}) => {
                     <AntDesign
                       name="like2"
                       size={20}
-                      style={{marginRight: 15}}
+                      style={{ marginRight: 15 }}
                     />
-                    <Text style={{fontSize: 18}}>Like</Text>
+                    <Text style={{ fontSize: 18 }}>Like</Text>
                   </TouchableOpacity>
                 )}
+
+
               <TouchableOpacity
                 onPress={() => delete_comment(commentinfo.id)}
                 style={{
@@ -988,9 +990,9 @@ const SinglePost = ({navigation, route}) => {
                 }}>
                 <AntDesign
                   name="delete"
-                  style={{fontSize: 20, marginRight: 15, color: 'red'}}
+                  style={{ fontSize: 20, marginRight: 15, color: 'red' }}
                 />
-                <Text style={{fontSize: 18, color: 'red'}}>Delete</Text>
+                <Text style={{ fontSize: 18, color: 'red' }}>Delete</Text>
               </TouchableOpacity>
             </>
           ) : (
@@ -1010,9 +1012,9 @@ const SinglePost = ({navigation, route}) => {
                       name="like1"
                       size={20}
                       color="#388aebff"
-                      style={{marginRight: 15}}
+                      style={{ marginRight: 15 }}
                     />
-                    <Text style={{fontSize: 18}}>Dislike</Text>
+                    <Text style={{ fontSize: 18 }}>Dislike</Text>
                   </TouchableOpacity>
                 )}
 
@@ -1030,9 +1032,9 @@ const SinglePost = ({navigation, route}) => {
                     <AntDesign
                       name="like2"
                       size={20}
-                      style={{marginRight: 15}}
+                      style={{ marginRight: 15 }}
                     />
-                    <Text style={{fontSize: 18}}>Like</Text>
+                    <Text style={{ fontSize: 18 }}>Like</Text>
                   </TouchableOpacity>
                 )}
               <View
@@ -1043,9 +1045,9 @@ const SinglePost = ({navigation, route}) => {
                 }}>
                 <AntDesign
                   name="delete"
-                  style={{fontSize: 20, marginRight: 15, color: '#F5C2C1'}}
+                  style={{ fontSize: 20, marginRight: 15, color: '#F5C2C1' }}
                 />
-                <Text style={{fontSize: 18, color: '#F5C2C1'}}>Delete</Text>
+                <Text style={{ fontSize: 18, color: '#F5C2C1' }}>Delete</Text>
               </View>
             </>
           )}
@@ -1098,8 +1100,8 @@ const styles = StyleSheet.create({
     width: null,
     resizeMode: 'cover',
   },
-  lightTxt: {fontSize: 13, color: 'grey'},
-  likeTxt: {fontSize: 14},
+  lightTxt: { fontSize: 13, color: 'grey' },
+  likeTxt: { fontSize: 14 },
   separator: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1119,7 +1121,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     // width: '80%',
   },
-  commentText: {fontWeight: 'bold', fontSize: 13},
+  commentText: { fontWeight: 'bold', fontSize: 13 },
   loader: {
     flex: 1,
     justifyContent: 'center',

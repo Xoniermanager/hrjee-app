@@ -141,6 +141,7 @@ const Profile = ({navigation}) => {
               status: response.data.data.status,
               salary: `${response.data.data.total_salary}`,
             });
+            get_employee_detail();
           } catch (e) {
             console.log(e);
           }

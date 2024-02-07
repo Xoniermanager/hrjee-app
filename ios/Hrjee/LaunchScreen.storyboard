@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
-    <device id="retina4_7" orientation="portrait" appearance="light"/>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="22505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina6_72" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22504"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -13,21 +14,20 @@
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="launch_screen" translatesAutoresizingMaskIntoConstraints="NO" id="G2D-ql-iBP">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchImages" translatesAutoresizingMaskIntoConstraints="NO" id="nNy-gf-1x0">
+                                <rect key="frame" x="0.0" y="59" width="430" height="839"/>
                             </imageView>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="BUg-0d-s9P"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="G2D-ql-iBP" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="topMargin" id="0Vr-mj-5NH"/>
-                            <constraint firstItem="G2D-ql-iBP" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="PxW-UD-7ri"/>
-                            <constraint firstAttribute="bottomMargin" secondItem="G2D-ql-iBP" secondAttribute="bottom" id="S7A-Nu-KLC"/>
-                            <constraint firstItem="G2D-ql-iBP" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leadingMargin" id="pC3-vo-4fM"/>
-                            <constraint firstAttribute="trailing" secondItem="G2D-ql-iBP" secondAttribute="trailing" id="pY8-ZC-LaD"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="G2D-ql-iBP" secondAttribute="trailing" id="ts5-6F-Nsi"/>
+                            <constraint firstItem="nNy-gf-1x0" firstAttribute="leading" secondItem="BUg-0d-s9P" secondAttribute="leading" id="5gC-AI-OIO"/>
+                            <constraint firstItem="BUg-0d-s9P" firstAttribute="trailing" secondItem="nNy-gf-1x0" secondAttribute="trailing" id="ElY-mf-Qgs"/>
+                            <constraint firstItem="BUg-0d-s9P" firstAttribute="bottom" secondItem="nNy-gf-1x0" secondAttribute="bottom" id="U8E-KK-vdF"/>
+                            <constraint firstItem="nNy-gf-1x0" firstAttribute="top" secondItem="BUg-0d-s9P" secondAttribute="top" id="tZH-zl-1ef"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -37,7 +37,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="launch_screen" width="562.5" height="1218"/>
+        <image name="LaunchImages" width="323" height="287"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

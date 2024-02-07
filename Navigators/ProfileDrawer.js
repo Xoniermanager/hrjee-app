@@ -12,7 +12,7 @@ import {
   Dimensions,
   Alert,
   ActivityIndicator,
-  FlatList,
+  FlatList, Pressable,
 } from 'react-native';
 import {
   createDrawerNavigator,
@@ -25,6 +25,7 @@ import Profile from '../src/screens/profile/Profile';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { IconButton, MD3Colors } from 'react-native-paper';
 import {
   useFocusEffect,
   useRoute,
@@ -43,6 +44,9 @@ import GetLocation from 'react-native-get-location';
 import ProfileNavigator from './ProfileNavigator';
 import { EssContext } from '../Context/EssContext';
 import Zocial from 'react-native-vector-icons/Zocial';
+import ImagePicker from 'react-native-image-crop-picker';
+import { moderateScale } from 'react-native-size-matters';
+
 
 function CustomDrawerContent(props) {
   const [isModalVisible, setIsModalVisible] = useState(false); // state to control modal visibility
@@ -76,6 +80,53 @@ function CustomDrawerContent(props) {
   const [showUpdate, setshowUpdate] = useState(false);
   const [updateId, setupdateId] = useState('');
   const [activeItem, setActiveItem] = useState('');
+  const [modalVisible1, setModalVisible1] = useState(false);
+  const [image, setImage] = useState('')
+  const [mimez, setMimez] = useState(false)
+  const [cameramodal, setCameramodal] = useState(false);
+  const [photo, setPhoto] = useState(null);
+  const [photoPath, setPhotoPath] = useState(null);
+
+  // choose from front camera  for profile Images////////
+
+
+  // choose from front camera  for profile Images////////
+
+  const takePhotoFromCamera = () => {
+    ImagePicker.openCamera({
+      width: 300,
+      height: 400,
+      cropping: true,
+      includeBase64: true,
+    }).then(image => {
+      setPhoto(image);
+      setPhotoPath(image?.path);
+      setCameramodal(!cameramodal);
+      setModalVisible1(!modalVisible1);
+    }).catch((err) => { console.log(err); })
+  }
+
+  // choose from library for Profile  choosePhotoFromLibrary
+
+  const choosePhotoFromLibrary = () => {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 400,
+      cropping: true,
+      includeBase64: true,
+
+    }).then(image => {
+      // setImage(image.path)
+      // setMimez(image?.mime)
+      setPhoto(image);
+      setPhotoPath(image?.path);
+
+      setStore(`data:${image.mime};base64,${image.data}`)  //convert image base 64
+      console.log("file ", image?.data?.mime);
+      setCameramodal(!cameramodal);
+      setModalVisible1(!modalVisible1);
+    }).catch((err) => { console.log(err); });
+  }
 
   const handleItemPress = item => {
     setModalVisible(!modalVisible);
@@ -106,6 +157,8 @@ function CustomDrawerContent(props) {
       .then(response => {
         if (response.data.status === 1) {
           try {
+            console.log("Response => ", response?.data?.data)
+
             setUserdata({
               EMPLOYEE_NUMBER: response.data.data.EMPLOYEE_NUMBER,
               name: response.data.data.FULL_NAME,
@@ -116,6 +169,7 @@ function CustomDrawerContent(props) {
               leave: response.data.data.leave,
               awards: response.data.data.awards,
               fatherName: response.data.data.father_name,
+              // image: response.data.data.image,
               dob: response.data.data.dob,
               gender: response.data.data.SEX,
               permanentAddress: response.data.data.permanent_address,
@@ -125,6 +179,12 @@ function CustomDrawerContent(props) {
               status: response.data.data.status,
               salary: `${response.data.data.total_salary}`,
             });
+
+            console.log('response', response?.data);
+
+            var profilePath = response?.data?.data?.image;
+            console.log("getimage  => ", profilePath)
+            setPhotoPath(profilePath);
           } catch (e) {
             console.log(e);
           }
@@ -214,40 +274,51 @@ function CustomDrawerContent(props) {
       });
   };
 
-  const EditProfile = async () => {
+  const UpdateProfile = async () => {
+
     const token = await AsyncStorage.getItem('Token');
-    const config = {
-      headers: { Token: token },
-    };
-    body = {
-      father_name: Userdata?.fatherName,
-      dob: Userdata?.dob,
-      SEX: Userdata?.gender,
-      email: Userdata?.email,
-      mobile_no: Userdata?.phone,
-      permanent_address: Userdata?.permanentAddress,
-      temp_address: Userdata?.location
+
+    const formData = new FormData();
+    formData.append('father_name', Userdata?.fatherName);
+    formData.append('dob', Userdata?.dob);
+    formData.append('SEX', Userdata?.gender)
+    formData.append('email', Userdata?.email)
+    formData.append('mobile_no', Userdata?.phone);
+    formData.append('permanent_address', Userdata?.permanentAddress)
+    if (photo) {
+      console.log('photo', photo);
+      // var photoFormData = ;
+      formData.append('image', {
+        uri: photo?.path,
+        type: photo?.mime,
+        name: photo?.modificationDate + '.' + 'jpg',
+        // name: photo?.modificationDate
+      });
     }
-    console.log("body => ", body)
-    axios
-      .post(`${apiUrl}/SecondPhaseApi/update_employee_data`, body, config)
+
+    console.log('formData', formData);
+
+    fetch(`${apiUrl}/SecondPhaseApi/update_employee_data`, {
+      method: 'POST',
+      headers: {
+        'Token': token,
+        Accept: 'application/json',
+      },
+      body: formData,
+    })
+      .then(response => response.json())
       .then(response => {
-        if (response.data.status === 1) {
-          try {
-            // props.navigation.navigate('Home')
-            alert(response?.data?.message)
-          } catch (e) {
-            console.log(e);
-          }
-        } else {
-          console.log('some error occured');
+        console.log(response)
+        if (response?.status == 1) {
+          alert(response?.message)
+          get_employee_detail();
         }
       })
-      .catch(error => {
-        console.log(error);
+      .catch(err => {
+        console.log(err)
       });
+  }
 
-  };
 
   const delete_address = async id => {
     setloading(true);
@@ -384,18 +455,52 @@ function CustomDrawerContent(props) {
     if (show == 'PersonalDetails') {
       return (
         <>
-          <View>
-            <View style={{ marginVertical: 10 }}>
-              <Text style={styles.heading_modal}>Profile Photo</Text>
+          <View style={{marginHorizontal:10}}>
+            <View style={{ }}>
+              {/* <Text style={styles.heading_modal}>Profile Photo</Text> */}
               <View style={{}}>
-                <Image
+                {/* <Image
                   style={styles.tinyLogo}
                   source={
                     Userdata.image
                       ? { uri: Userdata.image }
                       : require('../src/images/profile_pic.webp')
                   }
-                />
+                /> */}
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                  <View style={{ position: 'relative' }} >
+                    <>
+                      {
+                        photoPath ?
+                          <Image
+                            source={{ uri: photoPath }}
+                            style={{ width: 150, height: 150, borderRadius: 150 / 2, overflow: "hidden", borderWidth: 2, borderColor: "green" }}
+                          />
+                          :
+                          <Image
+                            source={{ uri: `https://i.postimg.cc/0y72NN2K/user.png` }}
+                            style={{ width: 150, height: 150, borderRadius: 150 / 2, overflow: "hidden", borderWidth: 2, borderColor: "green" }}
+                          />
+                      }
+
+                    </>
+
+
+
+
+                    <View style={{ position: 'absolute', right: 7, bottom: 7, }}>
+                      <View style={{ width: 30, height: 30, backgroundColor: 'black', borderRadius: 30 / 2, justifyContent: 'center', alignItems: 'center' }}>
+                        <IconButton
+                          icon="camera"
+                          iconColor={MD3Colors.neutral100}
+                          size={20}
+                          onPress={() => setModalVisible1(true)}
+                        />
+                      </View>
+                    </View>
+                  </View>
+                </View>
+
               </View>
             </View>
             <View style={{ marginVertical: 10 }}>
@@ -404,7 +509,7 @@ function CustomDrawerContent(props) {
                 style={styles.input}
                 placeholder="Father's Name"
                 selectTextOnFocus={false}
-                onChangeText={(text)=> setUserdata({...Userdata, fatherName: text})}
+                onChangeText={(text) => setUserdata({ ...Userdata, fatherName: text })}
                 value={Userdata.fatherName}
               />
             </View>
@@ -414,7 +519,7 @@ function CustomDrawerContent(props) {
                 style={styles.input}
                 placeholder="Date Of Birth"
                 selectTextOnFocus={false}
-                onChangeText={(text)=> setUserdata({...Userdata, dob: text})}
+                onChangeText={(text) => setUserdata({ ...Userdata, dob: text })}
                 value={Userdata.dob}
               />
             </View>
@@ -424,7 +529,7 @@ function CustomDrawerContent(props) {
                 style={styles.input}
                 placeholder="Gender"
                 selectTextOnFocus={false}
-                onChangeText={(text)=> setUserdata({...Userdata, gender: text})}
+                onChangeText={(text) => setUserdata({ ...Userdata, gender: text })}
                 value={Userdata.gender}
               />
             </View>
@@ -434,7 +539,7 @@ function CustomDrawerContent(props) {
                 style={styles.input}
                 placeholder="email address"
                 selectTextOnFocus={false}
-                onChangeText={(text)=> setUserdata({...Userdata, email: text})}
+                onChangeText={(text) => setUserdata({ ...Userdata, email: text })}
                 value={Userdata.email}
               />
             </View>
@@ -444,7 +549,7 @@ function CustomDrawerContent(props) {
                 style={styles.input}
                 placeholder="Phone Number"
                 selectTextOnFocus={false}
-                onChangeText={(text)=> setUserdata({...Userdata, phone: text})}
+                onChangeText={(text) => setUserdata({ ...Userdata, phone: text })}
                 value={Userdata.phone}
               />
             </View>
@@ -466,12 +571,48 @@ function CustomDrawerContent(props) {
                 style={[styles.input, { height: 60 }]}
                 placeholder="Permanent Address"
                 selectTextOnFocus={false}
-                onChangeText={(text)=> setUserdata({...Userdata, permanentAddress: text})}
+                onChangeText={(text) => setUserdata({ ...Userdata, permanentAddress: text })}
                 value={Userdata.permanentAddress}
               />
             </View>
           </View>
-          <TouchableOpacity onPress={() => EditProfile()} style={{ flex: 1, alignSelf:"center", backgroundColor: "blue", padding:10, borderRadius:5 }}>
+          <View style={styles.centeredView}>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalVisible1}
+              onRequestClose={() => {
+                Alert.alert('screen has been closed.');
+                setModalVisible1(!modalVisible1);
+              }}
+            >
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  <View style={{ margin: 20, alignSelf:"center" }}>
+                    <View style={styles.takepic}>
+                      <TouchableOpacity onPress={takePhotoFromCamera}>
+                        <Text style={styles.takepictext}>PICK FROM CAMERA</Text>
+                      </TouchableOpacity>
+                    </View>
+
+                    <View style={styles.takepic1}>
+                      <TouchableOpacity onPress={choosePhotoFromLibrary}>
+                        <Text style={styles.takepictext}>PICK FROM GALLERY</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                  <Pressable
+                    style={[styles.button, styles.buttonClose]}
+                    onPress={() => setModalVisible1(!modalVisible1)}
+                  >
+                    <Text style={{textAlign:"center", color:"#fff"}}>Cancel</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </Modal>
+          </View>
+          <TouchableOpacity onPress={() => UpdateProfile()} style={{ flex: 1, alignSelf: "center", backgroundColor: "blue", padding: 10, borderRadius: 5 , marginBottom:10}}>
             <Text style={{ textAlign: "center", color: "#fff" }}>Submit</Text>
           </TouchableOpacity>
         </>
@@ -538,7 +679,7 @@ function CustomDrawerContent(props) {
             ? location.map(
               (i, index) =>
                 i.location_id != 209 && (
-                  <TouchableOpacity
+                  <View
                     Key={index}
                     onPress={() =>
                       makeActive(i.location_id, i.location_name, i.address1)
@@ -576,7 +717,7 @@ function CustomDrawerContent(props) {
                             }}>
                             {i.address1}
                           </Text>
-                          <View
+                          {/* <View
                             style={{
                               flexDirection: 'row',
                               alignItems: 'center',
@@ -612,7 +753,7 @@ function CustomDrawerContent(props) {
                                 Edit
                               </Text>
                             </TouchableOpacity>
-                          </View>
+                          </View> */}
                         </View>
                       </View>
                       {i.active_status == 1 ? (
@@ -641,7 +782,7 @@ function CustomDrawerContent(props) {
                         />
                       )}
                     </View>
-                  </TouchableOpacity>
+                  </View>
                 ),
             )
             : null}
@@ -703,21 +844,22 @@ function CustomDrawerContent(props) {
               </TouchableOpacity>
             )
           ) : (
-            <TouchableOpacity
-              onPress={() => {
-                setshowInput(true),
-                  setshowUpdate(false),
-                  setaddressTitle(''),
-                  setaddress('');
-                alert(
-                  'Please add address by physically being present at that address',
-                );
-              }}
-              style={[styles.btnStyle, { width: '100%', marginTop: 20 }]}>
-              <Text style={{ color: 'white', fontWeight: 'bold' }}>
-                Add new address
-              </Text>
-            </TouchableOpacity>
+            <></>
+            // <TouchableOpacity
+            //   onPress={() => {
+            //     setshowInput(true),
+            //       setshowUpdate(false),
+            //       setaddressTitle(''),
+            //       setaddress('');
+            //     alert(
+            //       'Please add address by physically being present at that address',
+            //     );
+            //   }}
+            //   style={[styles.btnStyle, { width: '100%', marginTop: 20 }]}>
+            //   <Text style={{ color: 'white', fontWeight: 'bold' }}>
+            //     Add new address
+            //   </Text>
+            // </TouchableOpacity>
           )}
         </View>
       );
@@ -733,7 +875,7 @@ function CustomDrawerContent(props) {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1 ,}}>
       <DrawerContentScrollView {...props}>
         <ImageBackground
           source={require('../src/images/drawer-bg-img.webp')}
@@ -833,7 +975,7 @@ function CustomDrawerContent(props) {
         visible={isModalVisible}
         animationType="slide"
         onRequestClose={handleModalClose}>
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center',backgroundColor:'red'}}>
           <Text>This is a modal!</Text>
           <TouchableOpacity onPress={handleModalClose}>
             <Text style={{ color: 'red', marginTop: 16 }}>Close Modal</Text>
@@ -848,14 +990,15 @@ function CustomDrawerContent(props) {
                 name="close"
                 size={22}
                 style={{
-                  marginTop: location?.length > 5 ? 20 : 0,
+                  marginTop: location?.length > 5 ? 20 : 10,
+                  marginRight:10
                 }}
                 color="red"
                 onPress={() => handleItemPress('')}
               // onPress={() => setModalVisible(!modalVisible)}
               />
             </View>
-            <ScrollView>{renderDetails(show)}</ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false}>{renderDetails(show)}</ScrollView>
           </View>
         </View>
       </Modal>
@@ -919,7 +1062,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#00000085',
+    backgroundColor: 'red',
   },
   modalView: {
     margin: 20,
@@ -947,6 +1090,7 @@ const styles = StyleSheet.create({
   heading_modal: {
     fontSize: 15,
     fontWeight: '600',
+    marginBottom:5
   },
   btnStyle: {
     width: '40%',
@@ -971,9 +1115,11 @@ const styles = StyleSheet.create({
     padding: 10,
     elevation: 2,
     marginTop: 20,
+    marginHorizontal:50
   },
   buttonClose: {
     backgroundColor: '#2196F3',
+    marginBottom:25
   },
   textStyle: {
     color: 'white',
@@ -1015,4 +1161,46 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    // alignItems: 'center',
+  },
+  modalView: {
+    margin: 10,
+    borderRadius: 15,
+    // padding: 35,
+    // alignItems: 'center',
+    marginHorizontal:25,
+    shadowRadius: 4,
+    backgroundColor: "#fff",
+    elevation: 7,
+    borderWidth: 1,
+    borderColor: "#e2ddfe"
+  },
+  takepic: {
+    width: 160,
+    height: 40,
+    backgroundColor: '#75CFC5',
+    opacity: 3,
+    elevation: 2,
+    justifyContent: 'center',
+    borderRadius: 8,
+  },
+  takepictext: {
+    fontSize: 13,
+    alignSelf: 'center',
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  takepic1: {
+    width: 160,
+    height: 40,
+    backgroundColor: '#75CFC5',
+    opacity: 3,
+    elevation: 2,
+    justifyContent: 'center',
+    borderRadius: 8,
+    marginTop: 10,
+  }
 });
