@@ -20,6 +20,8 @@ const LeaveDetails = ({navigation, route}) => {
   const [leaveDetails, setleaveDetails] = useState();
   const [approvalHist, setapprovalHist] = useState([]);
 
+console.log("leaveDetails=>", leaveDetails)
+
   useFocusEffect(
     React.useCallback(() => {
       get_leaveDetails();
@@ -42,7 +44,7 @@ const LeaveDetails = ({navigation, route}) => {
         // console.log('response', response.data);
         if (response.data.status == 1) {
           try {
-            console.log(response.data.data);
+            console.log("resp====================",response.data.data);
             // setrecentLogs(response.data.content);
             setleaveDetails(response.data.data);
             setapprovalHist(response.data.data.approval_history);
@@ -185,7 +187,7 @@ const LeaveDetails = ({navigation, route}) => {
                     Leave Type:
                   </Text>
                   <Text style={[styles.value, {marginTop: 0}]}>
-                    {leaveDetails.leavetype_data.leave_type}
+                    {/* {leaveDetails.leavetype_data.leave_type} */}
                   </Text>
                 </View>
                 <View

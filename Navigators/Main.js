@@ -19,6 +19,7 @@ import SharePostNavigator from './SharePostNavigator';
 import { EssContext } from '../Context/EssContext';
 import ProfileDrawer from './ProfileDrawer';
 import Payslip from '../src/screens/home/Services/Payslip/Payslip';
+import Attendence from '../src/screens/home/Attendence/Attendence';
 
 const Tab = createBottomTabNavigator();
 
@@ -76,7 +77,7 @@ const Main = () => {
         component={Payslip}
       />
 
-      <Tab.Screen
+      {/* <Tab.Screen
         options={{
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons
@@ -87,19 +88,19 @@ const Main = () => {
         }}
         name="Training"
         component={TrainingNavigator}
-      />
-      {/* <Tab.Screen
+      /> */}
+      <Tab.Screen
         options={{
           tabBarIcon: ({color}) => (
-            <FontAwesome5
-              name="file-invoice-dollar"
+            <MaterialCommunityIcons
+              name="book-education"
               style={{fontSize: 23, color: color}}
             />
           ),
         }}
-        name="Expense"
-        component={ExpenseNavigator}
-      /> */}
+        name="Attendence"
+        component={Attendence}
+      />
       <Tab.Screen
         options={{
           headerShown: false,

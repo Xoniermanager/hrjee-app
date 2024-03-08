@@ -111,8 +111,9 @@ function MyStack() {
                 name="home"
                 component={Home}
               />
-              <Stack.Screen name="Attendence" component={Attendence} />
+             
               <Stack.Screen name="News" component={News} />
+              <Stack.Screen name="Attendence" component={Attendence} />
               <Stack.Screen name="Policies" component={Policies} />
               <Stack.Screen name="Services" component={Services} />
               <Stack.Screen name="Support" component={Support} />

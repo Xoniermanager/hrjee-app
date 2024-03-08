@@ -288,25 +288,25 @@ const Attendence = () => {
         });
         if (lat == null || lat == '') {
           setloading(false);
-          alert('Location not find');
+          // alert('Location not find');
           return;
         } else if (long == null || long == '') {
           setloading(false);
-          alert('Location not find');
+          // alert('Location not find');
           return;
         } else if (
           activeLocation.latitude == null ||
           activeLocation.latitude == ''
         ) {
           setloading(false);
-          alert('Please set active location');
+          // alert('Please set active location');
           return;
         } else if (
           activeLocation.longitude == null ||
           activeLocation.longitude == ''
         ) {
           setloading(false);
-          alert('Please set active location');
+          // alert('Please set active location');
           return;
         }
         var dis = getDistance(
@@ -316,7 +316,7 @@ const Attendence = () => {
             longitude: activeLocation.longitude,
           },
         );
-        if (dis <= 1000) {
+        if (dis) {
           const token = await AsyncStorage.getItem('Token');
           const config = {
             headers: {Token: token},
@@ -333,7 +333,7 @@ const Attendence = () => {
           punchOutApi.request(body, config);
         } else {
           setloading(false);
-          alert('You are not in the radius');
+          // alert('You are not in the radius');
         }
       })
       .catch(error => {
@@ -362,25 +362,25 @@ const Attendence = () => {
         });
         if (lat == null || lat == '') {
           setloading(false);
-          alert('Location not find');
+          // alert('Location not find');
           return;
         } else if (long == null || long == '') {
           setloading(false);
-          alert('Location not find');
+          // alert('Location not find');
           return;
         } else if (
           activeLocation.latitude == null ||
           activeLocation.latitude == ''
         ) {
           setloading(false);
-          alert('Please set active location');
+          // alert('Please set active location');
           return;
         } else if (
           activeLocation.longitude == null ||
           activeLocation.longitude == ''
         ) {
           setloading(false);
-          alert('Please set active location');
+          // alert('Please set active location');
           return;
         }
         var dis = getDistance(
@@ -390,7 +390,7 @@ const Attendence = () => {
             longitude: activeLocation.longitude,
           },
         );
-        if (dis <= 1000) {
+        if (dis) {
           console.log('it is running');
           const token = await AsyncStorage.getItem('Token');
           const userData = await AsyncStorage.getItem('UserData');
@@ -409,7 +409,7 @@ const Attendence = () => {
           punchInApi.request(body, config);
         } else {
           setloading(false);
-          alert('You are not in the radius');
+          // alert('You are not in the radius');
         }
       })
       .catch(error => {

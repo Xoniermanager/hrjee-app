@@ -71,7 +71,7 @@ const SelectAttendence = () => {
     axios
       .post(`${apiUrl}/Api/attendance`, body, config)
       .then(response => {
-        console.log('response', response.data);
+        console.log('addtendance response......................................', response.data);
         if (response.data.status == 1) {
           setloading(false);
 

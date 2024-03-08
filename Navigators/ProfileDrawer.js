@@ -864,6 +864,37 @@ function CustomDrawerContent(props) {
         </View>
       );
     }
+    else if (show == 'Aboutus') {
+      return (
+        <View style={{marginHorizontal:10, marginBottom:8}}>
+          <View style={{ flexDirection:"row", justifyContent:"space-between"}}>
+            <Text style={styles.heading_modal}>Hr Number</Text>
+            {/* <Text style={styles.heading_modal}>:</Text> */}
+            <Text style={styles.heading_modal}>1234567898</Text>
+          </View>
+          <View style={{ flexDirection:"row", justifyContent:"space-between"}}>
+            <Text style={styles.heading_modal}>IT Number</Text>
+            {/* <Text style={styles.heading_modal}>:</Text> */}
+            <Text style={styles.heading_modal}>9876543210</Text>
+          </View>
+          <View style={{ flexDirection:"row", justifyContent:"space-between"}}>
+            <Text style={styles.heading_modal}>CEO Number</Text>
+            {/* <Text style={styles.heading_modal}>:</Text> */}
+            <Text style={styles.heading_modal}>9876541234</Text>
+          </View>
+          <View style={{ flexDirection:"row", justifyContent:"space-between"}}>
+            <Text style={styles.heading_modal}>SEO Number</Text>
+            {/* <Text style={styles.heading_modal}>:</Text> */}
+            <Text style={styles.heading_modal}>7891234567</Text>
+          </View>
+          <View style={{ flexDirection:"row", justifyContent:"space-between"}}>
+            <Text style={styles.heading_modal}>Digital Marketing</Text>
+            {/* <Text style={styles.heading_modal}>:</Text> */}
+            <Text style={styles.heading_modal}>9876543213</Text>
+          </View>
+        </View>
+      );
+    }
   };
 
   const logout = async () => {
@@ -945,12 +976,28 @@ function CustomDrawerContent(props) {
           }
           activeTintColor={'red'}
         />
+        
         <DrawerItem
           label="Office Address"
           icon={color => <Feather name="map-pin" size={18} color={color} />}
           onPress={() => handleItemPress('OfficeAddress')}
           style={
             isItemActive('OfficeAddress') ? { backgroundColor: '#F5F5F5' } : null
+          }
+          activeTintColor={'red'}
+        />
+        <DrawerItem
+          label="About us"
+          icon={color => (
+            <MaterialCommunityIcons
+              name="information-outline"
+              size={25}
+              color={color}
+            />
+          )}
+          onPress={() => handleItemPress('Aboutus')}
+          style={
+            isItemActive('Aboutus') ? { backgroundColor: '#F5F5F5' } : null
           }
           activeTintColor={'red'}
         />
@@ -1090,7 +1137,8 @@ const styles = StyleSheet.create({
   heading_modal: {
     fontSize: 15,
     fontWeight: '600',
-    marginBottom:5
+    marginBottom:5,
+    color:"blue"
   },
   btnStyle: {
     width: '40%',

@@ -7,15 +7,15 @@ import {
   ScrollView,
   ActivityIndicator,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import Empty from '../../../reusable/Empty';
-import {useFocusEffect} from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiUrl from '../../../../src/reusable/apiUrl';
 import axios from 'axios';
 import PullToRefresh from '../../../reusable/PullToRefresh';
 
-const News = ({navigation}) => {
+const News = ({ navigation }) => {
   const [empty, setempty] = useState(false);
   const [loading, setloading] = useState(true);
   const [news, setnews] = useState([]);
@@ -64,7 +64,7 @@ const News = ({navigation}) => {
     setuser(JSON.parse(userData));
     // console.log('userData-->', u.userid);
     const config = {
-      headers: {Token: token},
+      headers: { Token: token },
     };
     axios
       .post(`${apiUrl}/api/newit`, {}, config)
@@ -72,7 +72,7 @@ const News = ({navigation}) => {
         if (response.data.status == 1) {
           try {
             setloading(false);
-            // console.log(response.data.content);
+            console.log("response>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", response.data.content);
             setnews(response.data.content);
           } catch (e) {
             setloading(false);
@@ -96,14 +96,13 @@ const News = ({navigation}) => {
   };
 
   return (
-    <View style={{flex: 1, backgroundColor: 'white', padding: 15}}>
+    <View style={{ flex: 1, backgroundColor: 'white', padding: 15 }}>
       {news.length == 0 && loading == false ? (
         <Empty onPress={() => navigation.navigate('home')} />
       ) : loading === false ? (
         <PullToRefresh onRefresh={handleRefresh}>
           <View>
-            <Text style={{fontSize: 27, fontWeight: '600'}}>Your briefing</Text>
-            <Text style={{fontSize: 13, color: 'grey'}}>
+            <Text style={{ fontSize: 13, color: 'grey' }}>
               {days[d.getDay()] +
                 ', ' +
                 d.getDate() +
@@ -111,8 +110,8 @@ const News = ({navigation}) => {
                 monthNames[d.getMonth()]}
             </Text>
           </View>
-          <View style={{marginTop: 15}}>
-            <Text style={{fontSize: 22, fontWeight: '600'}}>Top Stories</Text>
+          <View style={{ marginTop: 15 }}>
+            <Text style={{ fontSize: 22, fontWeight: '600' }}>Latest news</Text>
             {news.map((i, index) => (
               <TouchableOpacity
                 key={index}
@@ -125,18 +124,18 @@ const News = ({navigation}) => {
                 style={{
                   marginTop: 15,
                 }}>
+                <Text style={{ fontSize: 18, fontWeight: '500', marginTop: 10 }}>
+                  {i.title}
+                </Text>
                 <Image
                   style={styles.tinyLogo}
                   // source={require('../../../images/meta.jpeg')}
                   source={
                     i.attacnment
-                      ? {uri: i.attacnment}
+                      ? { uri: i.attacnment }
                       : require('../../../images/meta.jpeg')
                   }
                 />
-                <Text style={{fontSize: 18, fontWeight: '500', marginTop: 10}}>
-                  {i.title}
-                </Text>
                 {/* <Text style={{fontSize: 16, fontWeight: '400', marginTop: 5}}>
                   {i.short_description}
                 </Text> */}
@@ -145,7 +144,7 @@ const News = ({navigation}) => {
           </View>
         </PullToRefresh>
       ) : (
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <ActivityIndicator size="small" color="#388aeb" />
         </View>
       )}

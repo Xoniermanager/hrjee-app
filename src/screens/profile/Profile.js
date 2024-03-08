@@ -81,6 +81,8 @@ const Profile = ({navigation}) => {
     salary: '',
     location: {},
   });
+
+
   const [loading, setloading] = useState(false);
   const [location, setlocation] = useState();
   const [showInput, setshowInput] = useState(false);
@@ -91,6 +93,8 @@ const Profile = ({navigation}) => {
   const [currentAddress, setcurrentAddress] = useState(null);
   const [showUpdateModal, setshowUpdateModal] = useState(false);
   const [caption, setcaption] = useState('');
+
+
 
   const handleRefresh = async () => {
     get_employee_detail();
@@ -864,7 +868,7 @@ const Profile = ({navigation}) => {
         </PullToRefresh>
       )}
 
-      {!loading && (
+      {/* {!loading && (
         <View style={{flex: 1, marginTop: -150}}>
           <Tab.Navigator
             screenOptions={{
@@ -877,7 +881,7 @@ const Profile = ({navigation}) => {
             <Tab.Screen name="Videos" component={Videos} />
           </Tab.Navigator>
         </View>
-      )}
+      )} */}
     </>
   );
 };

@@ -15,20 +15,21 @@ import apiUrl from '../../reusable/apiUrl';
 
 const ForgotPassword = ({navigation}) => {
   const [email, setemail] = useState('');
-
   const [loading, setloading] = useState(false);
 
   const resetPassword = () => {
     setloading(true);
     axios
-      .post(`${apiUrl}/users/reset_password`, {
+      .post(`${apiUrl}users/reset_password`, {
         email: email,
       })
       .then(response => {
+        console.log("res--------------------------", response)
         if (response.data.status === 1) {
           try {
             setloading(false);
-            alert('Please check your email for new password');
+            alert(response?.data?.message)
+            navigation.navigate('Login')
           } catch (e) {
             setloading(false);
             alert(e);
@@ -40,6 +41,7 @@ const ForgotPassword = ({navigation}) => {
       })
       .catch(error => {
         setloading(false);
+        console.log("response...........................", error?.response)
         alert(error);
       });
   };

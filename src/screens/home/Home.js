@@ -22,6 +22,7 @@ import React, {
 } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import GlobalStyle from '../../reusable/GlobalStyle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
@@ -45,7 +46,7 @@ const Home = ({ navigation }) => {
   const punchOutApi = useApi2(attendence.punchOut);
   const todayAtendenceApi = useApi2(attendence.todayAttendence);
   const getActiveLocationApi = useApi2(attendence.getActiveLocation);
-  // let timer = useRef(null);
+
   const { setuser } = useContext(EssContext);
 
   const [user, setuser1] = useState(null);
@@ -58,6 +59,8 @@ const Home = ({ navigation }) => {
   const [training, settraining] = useState([]);
   const [announcements, setannouncements] = useState([]);
   const [fullTime, setfullTime] = useState(null);
+  const [officetiming, setOfficeTiming] = useState('');
+  // console.log("timing-----------------------------------------------", officetiming?.office_timing)
   const [activeLocation, setactiveLocation] = useState({
     latitude: '',
     longitude: '',
@@ -108,9 +111,10 @@ const Home = ({ navigation }) => {
   useEffect(() => {
     const getData = async () => {
       AsyncStorage.getItem('UserData').then(res => {
-        console.log("imageresponse..............", res)
+        console.log('imageresponse..............', res);
         setuser1(JSON.parse(res));
         setuser(JSON.parse(res));
+        setOfficeTiming(JSON.parse(res))
       });
     };
     getData();
@@ -161,7 +165,7 @@ const Home = ({ navigation }) => {
       check_punchIn();
       get_training();
       get_announcement();
-      ProfileDetails()
+      ProfileDetails();
     }, []),
   );
 
@@ -255,7 +259,7 @@ const Home = ({ navigation }) => {
       id: 1,
       name: 'Attendance',
       location: require('../../images/attendence.jpeg'),
-      moveTo: 'Attendence',
+      moveTo: 'Select Attendance',
     },
     {
       id: 2,
@@ -349,7 +353,7 @@ const Home = ({ navigation }) => {
       .post(`${apiUrl}/api/today_attendance`, body, config)
       .then(function (response) {
         setloading(false);
-        console.log(response.data);
+        console.log("response.........", response.data);
         if (response.data.status == 1) {
           const data = response.data.data;
           if (data.in_time != '' && data.out_location_id == null) {
@@ -384,6 +388,8 @@ const Home = ({ navigation }) => {
               setfullTime(time);
             }
           }
+
+
         } else {
           setloading(false);
           setinTime(null);
@@ -392,7 +398,7 @@ const Home = ({ navigation }) => {
         }
       })
       .catch(function (error) {
-        console.log(error);
+        console.log("some-------------", error);
       });
   };
 
@@ -429,25 +435,25 @@ const Home = ({ navigation }) => {
         });
         if (lat == null || lat == '') {
           setloading(false);
-          alert('Location not find');
+          // alert('Location not find');
           return;
         } else if (long == null || long == '') {
           setloading(false);
-          alert('Location not find');
+          // alert('Location not find');
           return;
         } else if (
           activeLocation.latitude == null ||
           activeLocation.latitude == ''
         ) {
           setloading(false);
-          alert('Please set active location');
+          // alert('Please set active location');
           return;
         } else if (
           activeLocation.longitude == null ||
           activeLocation.longitude == ''
         ) {
           setloading(false);
-          alert('Please set active location');
+          // alert('Please set active location');
           return;
         }
         var dis = getDistance(
@@ -457,7 +463,8 @@ const Home = ({ navigation }) => {
             longitude: activeLocation.longitude,
           },
         );
-        if (dis <= 4000) {
+        console.log("distance=>", dis, user.userid, user.email)
+        if (dis) {
           const token = await AsyncStorage.getItem('Token');
           const config = {
             headers: { Token: token },
@@ -470,6 +477,7 @@ const Home = ({ navigation }) => {
             latitude: lat,
             longitude: long,
           };
+          console.log("body=>", body)
           axios
             .post(`${apiUrl}/secondPhaseApi/mark_attendance_out`, body, config)
             .then(function (response) {
@@ -484,7 +492,7 @@ const Home = ({ navigation }) => {
             });
         } else {
           setloading(false);
-          alert('You are not in the radius');
+          // alert('You are not in the radius');
         }
       })
       .catch(error => {
@@ -495,145 +503,214 @@ const Home = ({ navigation }) => {
   };
 
   const punch_in = async () => {
-    setloading(true);
+    if (`${d.getHours()} : ${d.getMinutes()}` >= officetiming?.office_timing) {
+      setloading(true);
+      // GetLocation.getCurrentPosition({})
+      const userData = await AsyncStorage.getItem('UserData');
+      const userInfo = JSON.parse(userData);
+      let company_id = userInfo?.company_id;
 
-    // GetLocation.getCurrentPosition({})
-
-    GetLocation.getCurrentPosition({
-      enableHighAccuracy: true,
-      timeout: 15000,
-    })
-      .then(async location => {
-        var lat = parseFloat(location.latitude);
-        var long = parseFloat(location.longitude);
-        console.log('loc1-->', location);
-        console.log('loc2-->', lat);
-        console.log('loc3-->', long);
-        setcurrentLocation({
-          long: long,
-          lat: lat,
-        });
-        if (lat == null || lat == '') {
-          setloading(false);
-          alert('Location not find');
-          return;
-        } else if (long == null || long == '') {
-          setloading(false);
-          alert('Location not find');
-          return;
-        } else if (
-          activeLocation.latitude == null ||
-          activeLocation.latitude == ''
-        ) {
-          setloading(false);
-          alert('Please set active location');
-          return;
-        } else if (
-          activeLocation.longitude == null ||
-          activeLocation.longitude == ''
-        ) {
-          setloading(false);
-          alert('Please set active location');
-          return;
-        }
-        var dis = getDistance(
-          { latitude: lat, longitude: long },
-          {
-            latitude: activeLocation.latitude,
-            longitude: activeLocation.longitude,
-          },
-        );
-        console.log('dis-->', dis);
-        console.log(
-          'act loc->',
-          activeLocation.latitude,
-          activeLocation.longitude,
-        );
-        console.log('curr loc->', lat, long);
-
-        if (dis <= 4000) {
-          const token = await AsyncStorage.getItem('Token');
-          const userData = await AsyncStorage.getItem('UserData');
-          const userInfo = JSON.parse(userData);
-
-          const config = {
-            headers: { Token: token },
-          };
-          const body = {
-            email: userInfo.email,
-            location_id: activeLocation.location_id,
-            latitude: lat,
-            longitude: long,
-          };
-
-          axios
-            .post(`${apiUrl}/secondPhaseApi/mark_attendance_in`, body, config)
-            .then(function (response) {
-              // console.log('punch in', response.data);
-              if (response.data.status == 1) {
-                check_punchIn();
-              } else {
-                setloading(false);
-              }
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
-        } else {
-          setloading(false);
-          alert('You are not in the radius');
-        }
+      GetLocation.getCurrentPosition({
+        enableHighAccuracy: true,
+        timeout: 15000,
       })
-      .catch(error => {
-        setloading(false);
-        const { code, message } = error;
-        console.warn(code, message);
-      });
+        .then(async location => {
+          var lat = parseFloat(location.latitude);
+          var long = parseFloat(location.longitude);
+          console.log('loc1-->', location);
+          console.log('loc2-->', lat);
+          console.log('loc3-->', long);
+          setcurrentLocation({
+            long: long,
+            lat: lat,
+          });
+          if (lat == null || lat == '') {
+            setloading(false);
+            // alert('Location not find');
+            return;
+          } else if (long == null || long == '') {
+            setloading(false);
+            // alert('Location not find');
+            return;
+          } else if (
+            activeLocation.latitude == null ||
+            activeLocation.latitude == ''
+          ) {
+            setloading(false);
+            // alert('Please set active location');
+            return;
+          } else if (
+            activeLocation.longitude == null ||
+            activeLocation.longitude == ''
+          ) {
+            setloading(false);
+            // alert('Please set active location');
+            return;
+          }
+          var dis = getDistance(
+            { latitude: lat, longitude: long },
+            {
+              latitude: activeLocation.latitude,
+              longitude: activeLocation.longitude,
+            },
+          );
+          console.log('dis-->', dis);
+          console.log(
+            'act loc->',
+            activeLocation.latitude,
+            activeLocation.longitude,
+          );
+          console.log('curr loc->', lat, long);
+
+          if (company_id == 56 || company_id == 89) {
+            const token = await AsyncStorage.getItem('Token');
+            const userData = await AsyncStorage.getItem('UserData');
+            const userInfo = JSON.parse(userData);
+
+            const config = {
+              headers: { Token: token },
+            };
+            const body = {
+              email: userInfo.email,
+              location_id: activeLocation.location_id,
+              latitude: lat,
+              longitude: long,
+            };
+
+            axios
+              .post(`${apiUrl}/secondPhaseApi/mark_attendance_in`, body, config)
+              .then(function (response) {
+                console.log('punch in', response.data);
+                if (response.data.status == 1) {
+                  check_punchIn();
+                } else {
+                  setloading(false);
+                }
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
+          } else {
+
+            if (dis) {
+              const token = await AsyncStorage.getItem('Token');
+              const userData = await AsyncStorage.getItem('UserData');
+              const userInfo = JSON.parse(userData);
+
+              const config = {
+                headers: { Token: token },
+              };
+              const body = {
+                email: userInfo.email,
+                location_id: activeLocation.location_id,
+                latitude: lat,
+                longitude: long,
+              };
+
+              axios
+                .post(`${apiUrl}/secondPhaseApi/mark_attendance_in`, body, config)
+                .then(function (response) {
+                  console.log('punch in', response.data);
+                  if (response.data.status == 1) {
+                    check_punchIn();
+                  } else {
+                    setloading(false);
+                  }
+                })
+                .catch(function (error) {
+                  console.log(error);
+                });
+            } else {
+              const token = await AsyncStorage.getItem('Token');
+              const userData = await AsyncStorage.getItem('UserData');
+              const userInfo = JSON.parse(userData);
+              const config = {
+                headers: { Token: token },
+              };
+              const body = {
+                email: userInfo.email,
+                location_id: activeLocation.location_id,
+                active_latitude: activeLocation.latitude,
+                active_longitude: activeLocation.longitude,
+                cur_latitude: lat,
+                cur_longitude: long,
+                distance: dis,
+              };
+              axios
+                .post(
+                  `${apiUrl}/secondPhaseApi/get_logging_activity`,
+                  body,
+                  config,
+                )
+                .then(function (response) {
+                  console.log('punch in', response.data);
+                  if (response.data.status == 1) {
+                    console.log('error---', response.data.message);
+                    // check_punchIn();
+                  } else {
+                    setloading(false);
+                  }
+                })
+                .catch(function (error) {
+                  console.log(error);
+                });
+              setloading(false);
+              // alert('You are not in the radius');
+            }
+          }
+        })
+        .catch(error => {
+          setloading(false);
+          const { code, message } = error;
+          console.warn(code, message);
+        });
+    } else {
+      Alert.alert('At the moment, you do not have the eligibility to clock in.')
+    }
   };
 
-  const renderItem = ({ item }) => (
+  const renderItem = ({ item }) =>
     // console.log("A.......", item.id)
     // let x = item?.id;
     // console.log(x);
-    (item?.id === 0 || item?.id === 6) || <TouchableOpacity
-      onPress={() =>
-        item.id == 0
-          ? navigation.navigate('Post', { screen: 'Post' })
-          : navigation.navigate(item.moveTo)
-      }>
-      <ImageBackground
-        style={styles.options}
-        source={item.location}
-        imageStyle={{ borderRadius: 5 }}>
-        <LinearGradient
-          colors={['#00000000', '#000000']}
-          style={{
-            height: 160,
-            width: 130,
-            borderRadius: 5,
-          }}>
-          <Text
+    item?.id === 0 ||
+    item?.id === 6 || (
+      <TouchableOpacity
+        onPress={() =>
+          item.id == 0
+            ? navigation.navigate('Post', { screen: 'Post' })
+            : navigation.navigate(item.moveTo)
+        }>
+        <ImageBackground
+          style={styles.options}
+          source={item.location}
+          imageStyle={{ borderRadius: 5 }}>
+          <LinearGradient
+            colors={['#00000000', '#000000']}
             style={{
-              color: 'white',
-              position: 'absolute',
-              bottom: 10,
-              left: 10,
-              fontSize: 17,
-              fontWeight: '600',
+              height: 160,
+              width: 130,
+              borderRadius: 5,
             }}>
-            {item.name}
-          </Text>
-        </LinearGradient>
-      </ImageBackground>
-    </TouchableOpacity>
-    // for (let i = x; i < x; i++) {
-    //   x += i + "<br>";
-    //   console.log( "skipt data........",x)
-    // }
-
-
-
-  );
+            <Text
+              style={{
+                color: 'white',
+                position: 'absolute',
+                bottom: 10,
+                left: 10,
+                fontSize: 17,
+                fontWeight: '600',
+              }}>
+              {item.name}
+            </Text>
+          </LinearGradient>
+        </ImageBackground>
+      </TouchableOpacity>
+    );
+  // for (let i = x; i < x; i++) {
+  //   x += i + "<br>";
+  //   console.log( "skipt data........",x)
+  // }
 
   const navigateTo = item => {
     const url = item.download_video;
@@ -839,31 +916,45 @@ const Home = ({ navigation }) => {
       .catch(error => {
         console.log(error);
       });
-  }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
       <PullToRefresh onRefresh={handleRefresh}>
         <View style={{ flex: 1 }}>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: 10,
-            }}>
-            <Text numberOfLines={1} style={{ fontSize: 20, fontWeight: 'bold' }}>
-              Hi,{user?.FULL_NAME}!
-            </Text>
-            <Image
-              style={styles.tinyLogo}
-              // source={require('../../images/profile_pic.webp')}
-              source={
-                Userdata?.image
-                  ? { uri: Userdata.image }
-                  : require('../../images/profile_pic.webp')
-              }
-            />
+          <View style={{flexDirection:"row",alignItems: 'center', justifyContent:"space-between"}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                // justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: 10,
+              }}>
+              <Image
+                style={styles.tinyLogo}
+                // source={require('../../images/profile_pic.webp')}
+                source={
+                  Userdata?.image
+                    ? { uri: Userdata.image }
+                    : require('../../images/profile_pic.webp')
+                }
+              />
+              <Text numberOfLines={1} style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }}>
+                Hi,{user?.FULL_NAME}!
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={{
+              }}>
+              <Ionicons
+                name="notifications-outline"
+                style={{
+                  fontSize: 35,
+                  color: '#000',
+                  marginRight: 10,
+                }}
+              />
+            </TouchableOpacity>
           </View>
           <View style={{}}>
             <FlatList
@@ -1102,3 +1193,5 @@ const styles = StyleSheet.create({
   },
   purple_txt: { fontSize: 14, fontWeight: '700', color: GlobalStyle.blueDark },
 });
+
+
