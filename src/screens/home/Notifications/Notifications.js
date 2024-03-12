@@ -120,7 +120,7 @@ const Notifications = ({navigation}) => {
           padding: 15,
           backgroundColor: 'white',
         }}>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => navigation.navigate('home')}
           style={{
             padding: 15,
@@ -131,7 +131,7 @@ const Notifications = ({navigation}) => {
           <Text style={{color: 'white', fontWeight: '700'}}>
             Back to dashboard
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );
@@ -152,11 +152,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     // justifyContent: 'space-between',
     alignItems: 'center',
-    margin: 10,
+    margin: 0,
   },
   heading: {fontWeight: '700', marginRight: 10},
   card: {
-    padding: 15,
+    padding: 10,
     backgroundColor: '#fcbc0340',
     borderRadius: 5,
   },

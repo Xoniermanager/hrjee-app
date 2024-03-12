@@ -14,8 +14,8 @@ import {
   FlatList,
 } from 'react-native';
 // import React, {useState, useContext} from 'react';
-import React, {useState, useContext, useCallback, useMemo, useRef} from 'react';
-import BottomSheet, {BottomSheetFlatList} from '@gorhom/bottom-sheet';
+import React, { useState, useContext, useCallback, useMemo, useRef } from 'react';
+import BottomSheet, { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 
 import Entypo from 'react-native-vector-icons/Entypo';
 import Zocial from 'react-native-vector-icons/Zocial';
@@ -24,25 +24,25 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import {useFocusEffect} from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import apiUrl from '../../reusable/apiUrl';
 import axios from 'axios';
-import {EssContext} from '../../../Context/EssContext';
+import { EssContext } from '../../../Context/EssContext';
 import GetLocation from 'react-native-get-location';
 import LinearGradient from 'react-native-linear-gradient';
 import GlobalStyle from '../../reusable/GlobalStyle';
 import DocumentPicker from 'react-native-document-picker';
-import {createShimmerPlaceholder} from 'react-native-shimmer-placeholder';
+import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 import Feather from 'react-native-vector-icons/Feather';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 const Tab = createMaterialTopTabNavigator();
 import useApi from '../../../api/useApi';
 import post from '../../../api/post';
 import ProgressiveImage from '../../reusable/ProgressiveImage';
 import PullToRefresh from '../../reusable/PullToRefresh';
-const {width} = Dimensions.get('window');
-const {height} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 const ShimmerPlaceHolder = createShimmerPlaceholder(LinearGradient);
 import {
   createDrawerNavigator,
@@ -52,8 +52,8 @@ import {
 } from '@react-navigation/drawer';
 const Drawer = createDrawerNavigator();
 
-const Profile = ({navigation}) => {
-  const {user, setShowDrawerHeader} = useContext(EssContext);
+const Profile = ({ navigation }) => {
+  const { user, setShowDrawerHeader } = useContext(EssContext);
   const get_user_post_api = useApi(post.get_user_post);
 
   const [singleFile, setSingleFile] = useState(null);
@@ -93,10 +93,12 @@ const Profile = ({navigation}) => {
   const [currentAddress, setcurrentAddress] = useState(null);
   const [showUpdateModal, setshowUpdateModal] = useState(false);
   const [caption, setcaption] = useState('');
+  const [leavedata, setLeaveData] = useState([]);
 
 
 
   const handleRefresh = async () => {
+    get_employee_leave()
     get_employee_detail();
     get_address();
     get_user_post();
@@ -104,6 +106,7 @@ const Profile = ({navigation}) => {
   useFocusEffect(
     React.useCallback(() => {
       (async () => {
+        get_employee_leave()
         get_employee_detail();
         get_address();
       })();
@@ -116,10 +119,38 @@ const Profile = ({navigation}) => {
     }, []),
   );
 
+
+  const get_employee_leave = async () => {
+    const token = await AsyncStorage.getItem('Token');
+    const config = {
+      headers: { Token: token },
+    };
+    axios
+      .post(`${apiUrl}/secondPhaseApi/balance_leave`, {}, config)
+      .then(response => {
+        console.log("leave------------------------------", response?.data?.data)
+        if (response.data.status === "1") {
+          console.log("responsedata>>>>>>>>>>>>>>>>>>>>>>>", response?.data?.data)
+          try {
+            setLeaveData(response?.data?.data)
+            get_employee_detail();
+          } catch (e) {
+            console.log(e);
+          }
+        } else {
+          console.log('some error occured');
+        }
+      })
+      .catch(error => {
+        console.log("error-------------------", error);
+      });
+  };
+
+
   const get_employee_detail = async () => {
     const token = await AsyncStorage.getItem('Token');
     const config = {
-      headers: {Token: token},
+      headers: { Token: token },
     };
     axios
       .post(`${apiUrl}/api/get_employee_detail`, {}, config)
@@ -161,7 +192,7 @@ const Profile = ({navigation}) => {
   const get_address = async () => {
     const token = await AsyncStorage.getItem('Token');
     const config = {
-      headers: {Token: token},
+      headers: { Token: token },
     };
     axios
       .post(`${apiUrl}/api/get_location_list`, {}, config)
@@ -185,7 +216,7 @@ const Profile = ({navigation}) => {
   const get_user_post = async () => {
     const token = await AsyncStorage.getItem('Token');
     const config = {
-      headers: {Token: token},
+      headers: { Token: token },
     };
     get_user_post_api.request(
       {
@@ -196,14 +227,14 @@ const Profile = ({navigation}) => {
     );
   };
 
-  function New({navigation}) {
+  function New({ navigation }) {
     return (
-      <View style={{flex: 1, backgroundColor: 'white'}}>
+      <View style={{ flex: 1, backgroundColor: 'white' }}>
         {get_user_post_api.data && (
           <FlatList
             numColumns={3}
             data={get_user_post_api.data?.data}
-            renderItem={({item, index}) => (
+            renderItem={({ item, index }) => (
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate('SinglePost', {
@@ -237,7 +268,7 @@ const Profile = ({navigation}) => {
 
                   <ProgressiveImage
                     defaultImageSource={require('../../images/default-img.png')}
-                    source={{uri: item.post}}
+                    source={{ uri: item.post }}
                     style={{
                       width: width / 3,
                       height: width / 3,
@@ -263,7 +294,7 @@ const Profile = ({navigation}) => {
                 alignItems: 'center',
               }}>
               <Feather name="camera" size={50} />
-              <Text style={{marginTop: 0, fontSize: 16}}>No post to show</Text>
+              <Text style={{ marginTop: 0, fontSize: 16 }}>No post to show</Text>
             </View>
           </View>
         )}
@@ -276,14 +307,14 @@ const Profile = ({navigation}) => {
     );
   }
 
-  function All({navigation}) {
+  function All({ navigation }) {
     return (
-      <View style={{flex: 1, backgroundColor: 'white'}}>
+      <View style={{ flex: 1, backgroundColor: 'white' }}>
         {get_user_post_api.data && (
           <FlatList
             numColumns={3}
             data={get_user_post_api.data?.data}
-            renderItem={({item, index}) => (
+            renderItem={({ item, index }) => (
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate('SinglePost', {
@@ -316,7 +347,7 @@ const Profile = ({navigation}) => {
                   // />
                   <ProgressiveImage
                     defaultImageSource={require('../../images/default-img.png')}
-                    source={{uri: item.post}}
+                    source={{ uri: item.post }}
                     style={{
                       width: width / 3,
                       height: width / 3,
@@ -342,7 +373,7 @@ const Profile = ({navigation}) => {
                 alignItems: 'center',
               }}>
               <Feather name="camera" size={50} />
-              <Text style={{marginTop: 0, fontSize: 16}}>No post to show</Text>
+              <Text style={{ marginTop: 0, fontSize: 16 }}>No post to show</Text>
             </View>
           </View>
         )}
@@ -355,7 +386,7 @@ const Profile = ({navigation}) => {
     );
   }
 
-  function Videos({navigation}) {
+  function Videos({ navigation }) {
     let arrVid = [];
 
     get_user_post_api.data?.data.map(i => {
@@ -365,12 +396,12 @@ const Profile = ({navigation}) => {
     });
 
     return (
-      <View style={{flex: 1, backgroundColor: 'white'}}>
+      <View style={{ flex: 1, backgroundColor: 'white' }}>
         {get_user_post_api.data && (
           <FlatList
             numColumns={3}
             data={get_user_post_api.data?.data}
-            renderItem={({item, index}) => (
+            renderItem={({ item, index }) => (
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate('SinglePost', {
@@ -416,7 +447,7 @@ const Profile = ({navigation}) => {
                 size={50}
                 onPress={() => handleExpandPress()}
               />
-              <Text style={{marginTop: 0, fontSize: 16}}>
+              <Text style={{ marginTop: 0, fontSize: 16 }}>
                 No Videos to show
               </Text>
             </View>
@@ -435,7 +466,7 @@ const Profile = ({navigation}) => {
                 alignItems: 'center',
               }}>
               <Feather name="camera" size={50} />
-              <Text style={{marginTop: 0, fontSize: 16}}>No post to show</Text>
+              <Text style={{ marginTop: 0, fontSize: 16 }}>No post to show</Text>
             </View>
           </View>
         )}
@@ -445,8 +476,8 @@ const Profile = ({navigation}) => {
 
   const renderPlaceholder = () => {
     return (
-      <View style={{height: height, padding: 20, backgroundColor: 'white'}}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+      <View style={{ height: height, padding: 20, backgroundColor: 'white' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <ShimmerPlaceHolder
             style={{
               height: 60,
@@ -459,24 +490,24 @@ const Profile = ({navigation}) => {
           <View>
             <ShimmerPlaceHolder
               height={20}
-              style={{width: '70%'}}
+              style={{ width: '70%' }}
               autoRun={true}
             />
             <ShimmerPlaceHolder
               height={20}
-              style={{width: '70%', marginTop: 10}}
+              style={{ width: '70%', marginTop: 10 }}
               autoRun={true}
             />
             <ShimmerPlaceHolder
               height={20}
-              style={{width: '70%', marginTop: 10}}
+              style={{ width: '70%', marginTop: 10 }}
               autoRun={true}
             />
           </View>
         </View>
         <ShimmerPlaceHolder
           height={30}
-          style={{width: '100%', marginTop: 50}}
+          style={{ width: '100%', marginTop: 50 }}
           autoRun={true}
         />
         <View
@@ -498,7 +529,7 @@ const Profile = ({navigation}) => {
             <ShimmerPlaceHolder
               height={20}
               width={60}
-              style={{marginTop: 10}}
+              style={{ marginTop: 10 }}
               autoRun={true}
             />
           </View>
@@ -515,7 +546,7 @@ const Profile = ({navigation}) => {
             <ShimmerPlaceHolder
               height={20}
               width={60}
-              style={{marginTop: 10}}
+              style={{ marginTop: 10 }}
               autoRun={true}
             />
           </View>
@@ -532,13 +563,13 @@ const Profile = ({navigation}) => {
             <ShimmerPlaceHolder
               height={20}
               width={60}
-              style={{marginTop: 10}}
+              style={{ marginTop: 10 }}
               autoRun={true}
             />
           </View>
         </View>
         <ShimmerPlaceHolder
-          style={{width: '100%', marginTop: 50, height: '35%'}}
+          style={{ width: '100%', marginTop: 50, height: '35%' }}
           autoRun={true}
         />
       </View>
@@ -602,7 +633,7 @@ const Profile = ({navigation}) => {
         setSingleFile(null);
         setcaption('');
         handleClosePress();
-        navigation.navigate('Post', {screen: 'Post'});
+        navigation.navigate('Post', { screen: 'Post' });
       } else {
         setuploading(false);
         // alert(responseJson.message);
@@ -690,20 +721,20 @@ const Profile = ({navigation}) => {
       {!loading && (
         <PullToRefresh
           onRefresh={handleRefresh}
-          style={{flex: 1, backgroundColor: 'white'}}>
+          style={{ flex: 1, backgroundColor: 'white' }}>
           <View
             style={{
               padding: 15,
               backgroundColor: GlobalStyle.blueDark,
             }}>
             <View
-              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-              <View style={{flexDirection: 'row'}}>
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <View style={{ flexDirection: 'row' }}>
                 <Image
                   style={styles.tinyLogo}
                   source={
                     Userdata.image
-                      ? {uri: Userdata.image}
+                      ? { uri: Userdata.image }
                       : require('../../images/profile_pic.webp')
                   }
                 />
@@ -711,36 +742,36 @@ const Profile = ({navigation}) => {
                   <Text
                     style={[
                       styles.profileFont,
-                      {fontSize: 20, fontWeight: 'bold'},
+                      { fontSize: 20, fontWeight: 'bold' },
                     ]}>
                     {Userdata.name}
                   </Text>
-                  <View style={{flexDirection: 'row'}}>
+                  <View style={{ flexDirection: 'row' }}>
                     <Entypo
                       name="location-pin"
                       size={17}
                       color="white"
-                      style={{marginRight: 5}}
+                      style={{ marginRight: 5 }}
                     />
                     <Text style={styles.profileFont}>
                       {Userdata.permanentAddress}
                     </Text>
                   </View>
-                  <View style={{flexDirection: 'row'}}>
+                  <View style={{ flexDirection: 'row' }}>
                     <Entypo
                       name="phone"
                       size={17}
                       color="white"
-                      style={{marginRight: 5}}
+                      style={{ marginRight: 5 }}
                     />
                     <Text style={styles.profileFont}>{Userdata.phone}</Text>
                   </View>
-                  <View style={{flexDirection: 'row'}}>
+                  <View style={{ flexDirection: 'row' }}>
                     <Zocial
                       name="email"
                       size={17}
                       color="white"
-                      style={{marginRight: 5}}
+                      style={{ marginRight: 5 }}
                     />
                     <Text style={styles.profileFont}>{Userdata.email}</Text>
                   </View>
@@ -762,7 +793,7 @@ const Profile = ({navigation}) => {
                 borderTopWidth: 0.5,
                 borderColor: 'white',
               }}>
-              <Text style={[styles.profileFont, {fontWeight: '600'}]}>
+              <Text style={[styles.profileFont, { fontWeight: '600' }]}>
                 At work for: {Userdata.atWorkfor}
               </Text>
             </View>
@@ -775,11 +806,11 @@ const Profile = ({navigation}) => {
                 borderTopWidth: 0.5,
                 borderColor: 'white',
               }}>
-              <View style={{alignItems: 'center'}}>
+              <View style={{ alignItems: 'center' }}>
                 <ImageBackground
                   style={styles.options}
                   source={require('../../images/attendence.jpeg')}
-                  imageStyle={{borderRadius: 50}}>
+                  imageStyle={{ borderRadius: 50 }}>
                   <View
                     style={{
                       height: 65,
@@ -789,7 +820,7 @@ const Profile = ({navigation}) => {
                       justifyContent: 'center',
                       alignItems: 'center',
                     }}>
-                    <Text style={{fontSize: 20, fontWeight: '600'}}>
+                    <Text style={{ fontSize: 20, fontWeight: '600' }}>
                       {Userdata.attendence}
                     </Text>
                   </View>
@@ -805,40 +836,55 @@ const Profile = ({navigation}) => {
                 </Text>
               </View>
 
-              <View style={{alignItems: 'center'}}>
-                <ImageBackground
-                  style={styles.options}
-                  source={require('../../images/job_leave.jpeg')}
-                  imageStyle={{borderRadius: 50}}>
-                  <View
-                    style={{
-                      height: 65,
-                      width: 65,
-                      borderRadius: 50,
-                      backgroundColor: '#ffffff95',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
-                    <Text style={{fontSize: 20, fontWeight: '600'}}>
-                      {Userdata.leave}
-                    </Text>
-                  </View>
-                </ImageBackground>
-                <Text
-                  style={{
-                    marginTop: 5,
-                    fontSize: 14,
-                    fontWeight: '600',
-                    color: 'white',
-                  }}>
-                  Leave
-                </Text>
-              </View>
-              <View style={{alignItems: 'center'}}>
+              {
+                leavedata?.map((elements, index) => {
+                  const total = parseInt(elements.taken_leave ) + parseInt(elements.balance_leave);
+
+                  return (
+                    <View key={index} style={{ alignItems: 'center' }}>
+                      <ImageBackground
+                        style={styles.options}
+                        source={require('../../images/job_leave.jpeg')}
+                        imageStyle={{ borderRadius: 50 }}>
+                        <View
+                          style={{
+                            height: 65,
+                            width: 65,
+                            borderRadius: 50,
+                            backgroundColor: '#ffffff95',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            flexDirection:"row"
+                          }}>
+                          <Text style={{ fontSize: 20, fontWeight: '600' }}>
+                            {elements.balance_leave}
+                          </Text>
+                          <Text style={{ fontSize: 20, fontWeight: '600' }}>
+                            / 
+                          </Text>
+                          <Text style={{ fontSize: 20, fontWeight: '600' }}>
+                            {total}
+                          </Text>
+                        </View>
+                      </ImageBackground>
+                      <Text
+                        style={{
+                          marginTop: 5,
+                          fontSize: 14,
+                          fontWeight: '600',
+                          color: 'white',
+                        }}>
+                        Leave
+                      </Text>
+                    </View>
+                  )
+                })
+              }
+              <View style={{ alignItems: 'center' }}>
                 <ImageBackground
                   style={styles.options}
                   source={require('../../images/awards.jpeg')}
-                  imageStyle={{borderRadius: 50}}>
+                  imageStyle={{ borderRadius: 50 }}>
                   <View
                     style={{
                       height: 65,
@@ -848,7 +894,7 @@ const Profile = ({navigation}) => {
                       justifyContent: 'center',
                       alignItems: 'center',
                     }}>
-                    <Text style={{fontSize: 20, fontWeight: '600'}}>
+                    <Text style={{ fontSize: 20, fontWeight: '600' }}>
                       {Userdata.awards}
                     </Text>
                   </View>
@@ -917,10 +963,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#d3e3fd30',
     borderColor: '#0c57d0',
   },
-  heading: {fontWeight: '500', fontSize: 15},
-  heading_grey: {fontSize: 14, color: 'grey', fontWeight: '300'},
-  add_txt: {fontSize: 14, color: '#efad37', fontWeight: '600'},
-  view_txt: {color: GlobalStyle.blueDark, fontWeight: 'bold'},
+  heading: { fontWeight: '500', fontSize: 15 },
+  heading_grey: { fontSize: 14, color: 'grey', fontWeight: '300' },
+  add_txt: { fontSize: 14, color: '#efad37', fontWeight: '600' },
+  view_txt: { color: GlobalStyle.blueDark, fontWeight: 'bold' },
   centeredView: {
     flex: 1,
     justifyContent: 'center',
@@ -963,8 +1009,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     flexDirection: 'row',
   },
-  input_title: {marginBottom: 3, fontSize: 14, fontWeight: '500'},
-  input_top_margin: {marginTop: 15},
+  input_title: { marginBottom: 3, fontSize: 14, fontWeight: '500' },
+  input_top_margin: { marginTop: 15 },
   input: {
     height: 45,
     backgroundColor: 'white',
@@ -1009,8 +1055,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  bottomsheetTxt: {fontSize: 17},
-  bottomsheetLogo: {fontSize: 22, marginRight: 15},
+  bottomsheetTxt: { fontSize: 17 },
+  bottomsheetLogo: { fontSize: 22, marginRight: 15 },
   bottomsheetBtn: {
     flexDirection: 'row',
     alignItems: 'center',

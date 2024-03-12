@@ -12,7 +12,7 @@ import {
   Dimensions,
   Alert,
   ActivityIndicator,
-  FlatList, Pressable,
+  Linking, Pressable,
 } from 'react-native';
 import {
   createDrawerNavigator,
@@ -86,6 +86,7 @@ function CustomDrawerContent(props) {
   const [cameramodal, setCameramodal] = useState(false);
   const [photo, setPhoto] = useState(null);
   const [photoPath, setPhotoPath] = useState(null);
+  const [contectdata, setContectData] = useState([]);
 
   // choose from front camera  for profile Images////////
 
@@ -143,6 +144,7 @@ function CustomDrawerContent(props) {
       (async () => {
         get_employee_detail();
         get_address();
+        aboutUs()
       })();
     }, []),
   );
@@ -451,12 +453,36 @@ function CustomDrawerContent(props) {
     setIsModalVisible(false);
   };
 
+  const aboutUs = async () => {
+    const token = await AsyncStorage.getItem('Token');
+    const config = {
+      headers: { Token: token },
+    };
+    axios
+      .post(`${apiUrl}/secondPhaseApi/get_service_contact`, {}, config)
+      .then(response => {
+        if (response.data.status === 1) {
+          try {
+            console.log("response-------------------------------", response.data?.data)
+            setContectData(response?.data?.data)
+          } catch (e) {
+            console.log(e);
+          }
+        } else {
+          console.log('some error occured');
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
   const renderDetails = show => {
     if (show == 'PersonalDetails') {
       return (
         <>
-          <View style={{marginHorizontal:10}}>
-            <View style={{ }}>
+          <View style={{ marginHorizontal: 10 }}>
+            <View style={{}}>
               {/* <Text style={styles.heading_modal}>Profile Photo</Text> */}
               <View style={{}}>
                 {/* <Image
@@ -588,7 +614,7 @@ function CustomDrawerContent(props) {
             >
               <View style={styles.centeredView}>
                 <View style={styles.modalView}>
-                  <View style={{ margin: 20, alignSelf:"center" }}>
+                  <View style={{ margin: 20, alignSelf: "center" }}>
                     <View style={styles.takepic}>
                       <TouchableOpacity onPress={takePhotoFromCamera}>
                         <Text style={styles.takepictext}>PICK FROM CAMERA</Text>
@@ -606,13 +632,13 @@ function CustomDrawerContent(props) {
                     style={[styles.button, styles.buttonClose]}
                     onPress={() => setModalVisible1(!modalVisible1)}
                   >
-                    <Text style={{textAlign:"center", color:"#fff"}}>Cancel</Text>
+                    <Text style={{ textAlign: "center", color: "#fff" }}>Cancel</Text>
                   </Pressable>
                 </View>
               </View>
             </Modal>
           </View>
-          <TouchableOpacity onPress={() => UpdateProfile()} style={{ flex: 1, alignSelf: "center", backgroundColor: "blue", padding: 10, borderRadius: 5 , marginBottom:10}}>
+          <TouchableOpacity onPress={() => UpdateProfile()} style={{ flex: 1, alignSelf: "center", backgroundColor: "blue", padding: 10, borderRadius: 5, marginBottom: 10 }}>
             <Text style={{ textAlign: "center", color: "#fff" }}>Submit</Text>
           </TouchableOpacity>
         </>
@@ -845,55 +871,35 @@ function CustomDrawerContent(props) {
             )
           ) : (
             <></>
-            // <TouchableOpacity
-            //   onPress={() => {
-            //     setshowInput(true),
-            //       setshowUpdate(false),
-            //       setaddressTitle(''),
-            //       setaddress('');
-            //     alert(
-            //       'Please add address by physically being present at that address',
-            //     );
-            //   }}
-            //   style={[styles.btnStyle, { width: '100%', marginTop: 20 }]}>
-            //   <Text style={{ color: 'white', fontWeight: 'bold' }}>
-            //     Add new address
-            //   </Text>
-            // </TouchableOpacity>
           )}
         </View>
       );
     }
     else if (show == 'Aboutus') {
+      const phoneNumber = '8989777878';
       return (
-        <View style={{marginHorizontal:10, marginBottom:8}}>
-          <View style={{ flexDirection:"row", justifyContent:"space-between"}}>
-            <Text style={styles.heading_modal}>Hr Number</Text>
-            {/* <Text style={styles.heading_modal}>:</Text> */}
-            <Text style={styles.heading_modal}>1234567898</Text>
-          </View>
-          <View style={{ flexDirection:"row", justifyContent:"space-between"}}>
-            <Text style={styles.heading_modal}>IT Number</Text>
-            {/* <Text style={styles.heading_modal}>:</Text> */}
-            <Text style={styles.heading_modal}>9876543210</Text>
-          </View>
-          <View style={{ flexDirection:"row", justifyContent:"space-between"}}>
-            <Text style={styles.heading_modal}>CEO Number</Text>
-            {/* <Text style={styles.heading_modal}>:</Text> */}
-            <Text style={styles.heading_modal}>9876541234</Text>
-          </View>
-          <View style={{ flexDirection:"row", justifyContent:"space-between"}}>
-            <Text style={styles.heading_modal}>SEO Number</Text>
-            {/* <Text style={styles.heading_modal}>:</Text> */}
-            <Text style={styles.heading_modal}>7891234567</Text>
-          </View>
-          <View style={{ flexDirection:"row", justifyContent:"space-between"}}>
-            <Text style={styles.heading_modal}>Digital Marketing</Text>
-            {/* <Text style={styles.heading_modal}>:</Text> */}
-            <Text style={styles.heading_modal}>9876543213</Text>
-          </View>
-        </View>
+        <>
+          {
+            contectdata?.map((element, indx) => {
+              return (
+                <View key={indx} style={{ marginHorizontal: 10, marginBottom: 8 }}>
+                  <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                  <Text style={styles.heading_modal}>{element?.designation}</Text>
+                    <Text style={styles.heading_modal}>{element?.name}</Text>
+                    <TouchableOpacity onPress={() => Linking.openURL(`tel:${phoneNumber}`)}>
+                      <Text style={styles.heading_modal}>{element?.contact}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              )
+
+            })
+          }
+        </>
+
       );
+
+
     }
   };
 
@@ -906,7 +912,7 @@ function CustomDrawerContent(props) {
   };
 
   return (
-    <View style={{ flex: 1 ,}}>
+    <View style={{ flex: 1, }}>
       <DrawerContentScrollView {...props}>
         <ImageBackground
           source={require('../src/images/drawer-bg-img.webp')}
@@ -976,7 +982,7 @@ function CustomDrawerContent(props) {
           }
           activeTintColor={'red'}
         />
-        
+
         <DrawerItem
           label="Office Address"
           icon={color => <Feather name="map-pin" size={18} color={color} />}
@@ -1022,7 +1028,7 @@ function CustomDrawerContent(props) {
         visible={isModalVisible}
         animationType="slide"
         onRequestClose={handleModalClose}>
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center',backgroundColor:'red'}}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: 'red' }}>
           <Text>This is a modal!</Text>
           <TouchableOpacity onPress={handleModalClose}>
             <Text style={{ color: 'red', marginTop: 16 }}>Close Modal</Text>
@@ -1038,7 +1044,7 @@ function CustomDrawerContent(props) {
                 size={22}
                 style={{
                   marginTop: location?.length > 5 ? 20 : 10,
-                  marginRight:10
+                  marginRight: 10
                 }}
                 color="red"
                 onPress={() => handleItemPress('')}
@@ -1137,8 +1143,8 @@ const styles = StyleSheet.create({
   heading_modal: {
     fontSize: 15,
     fontWeight: '600',
-    marginBottom:5,
-    color:"blue"
+    marginBottom: 5,
+    color: "blue"
   },
   btnStyle: {
     width: '40%',
@@ -1163,11 +1169,11 @@ const styles = StyleSheet.create({
     padding: 10,
     elevation: 2,
     marginTop: 20,
-    marginHorizontal:50
+    marginHorizontal: 50
   },
   buttonClose: {
     backgroundColor: '#2196F3',
-    marginBottom:25
+    marginBottom: 25
   },
   textStyle: {
     color: 'white',
@@ -1219,7 +1225,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     // padding: 35,
     // alignItems: 'center',
-    marginHorizontal:25,
+    marginHorizontal: 25,
     shadowRadius: 4,
     backgroundColor: "#fff",
     elevation: 7,

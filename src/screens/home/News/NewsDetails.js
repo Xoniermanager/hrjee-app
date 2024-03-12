@@ -75,7 +75,6 @@ const NewsDetails = ({navigation, route}) => {
         if (response.data.status === 1) {
           try {
             setloading(false);
-            // console.log(response.data.data);
             setnewsDetail(response.data.data);
           } catch (e) {
             setloading(false);
@@ -105,6 +104,9 @@ const NewsDetails = ({navigation, route}) => {
         </View>
       ) : newsDetail ? (
         <PullToRefresh onRefresh={handleRefresh}>
+           <Text style={{fontSize: 19, fontWeight: '600'}}>
+              {newsDetail.title}
+            </Text>
           <Image
             style={styles.tinyLogo}
             source={
@@ -115,9 +117,7 @@ const NewsDetails = ({navigation, route}) => {
             // source={require('../../../images/meta.jpeg')}
           />
           <View style={{marginTop: 10}}>
-            <Text style={{fontSize: 19, fontWeight: '600'}}>
-              {newsDetail.title}
-            </Text>
+          <Text style={{ color:"#000", fontWeight:"bold" }}>Publish Date</Text>
             <View style={{flexDirection: 'row', marginTop: 10}}>
               <AntDesign
                 name="calendar"
@@ -127,9 +127,15 @@ const NewsDetails = ({navigation, route}) => {
               />
               <Text style={{fontSize: 13}}>{newsDetail.publish_date}</Text>
             </View>
-            <View style={{marginTop: 20}}>
+            <View style={{marginTop: 10}}>
+              <Text style={{color:"#000", fontWeight:"bold" }}>Short Description</Text>
+              <Text>{newsDetail.short_description}</Text>
+            </View>
+            <View style={{marginTop: 10}}>
+              <Text style={{color:"#000", fontWeight:"bold" }}>Long Description</Text>
               <Text>{newsDetail.long_description}</Text>
             </View>
+          
           </View>
         </PullToRefresh>
       ) : (

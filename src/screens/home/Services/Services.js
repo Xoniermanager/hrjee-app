@@ -27,6 +27,8 @@ const Services = ({navigation}) => {
         onPress={() => navigation.navigate('Document')}
       />
       <Button label={'Forms'} onPress={() => navigation.navigate('Forms')} />
+      <Button label={'Resign'} onPress={() => navigation.navigate('Resign')} />
+
     </View>
   );
 };

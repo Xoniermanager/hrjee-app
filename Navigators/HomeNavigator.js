@@ -15,6 +15,7 @@ import SelectAttendence from '../src/screens/home/Services/SelectAttendence';
 import ApplyLeave from '../src/screens/home/Services/Leave/ApplyLeave';
 import LeaveList from '../src/screens/home/Services/Leave/LeaveList';
 import Holidays from '../src/screens/home/Services/Holidays/Holidays';
+import Resign from '../src/screens/home/Services/Resign/Resign';
 import Payslip from '../src/screens/home/Services/Payslip/Payslip';
 import Document from '../src/screens/home/Services/Document/Document';
 import NewsDetails from '../src/screens/home/News/NewsDetails';
@@ -127,6 +128,7 @@ function MyStack() {
               <Stack.Screen name="Applied Leaves" component={LeaveList} />
               <Stack.Screen name="Apply Leave" component={ApplyLeave} />
               <Stack.Screen name="Holidays" component={Holidays} />
+              <Stack.Screen name="Resign" component={Resign} />
               <Stack.Screen name="Payslip" component={Payslip} />
               <Stack.Screen name="Document" component={Document} />
               <Stack.Screen name="News Detail" component={NewsDetails} />
@@ -251,6 +253,7 @@ function MyStack() {
               <Stack.Screen name="Applied Leaves" component={LeaveList} />
               <Stack.Screen name="Apply Leave" component={ApplyLeave} />
               <Stack.Screen name="Holidays" component={Holidays} />
+              <Stack.Screen name="Resign" component={Resign} />
               <Stack.Screen name="Payslip" component={Payslip} />
               <Stack.Screen name="Document" component={Document} />
               <Stack.Screen name="News Detail" component={NewsDetails} />

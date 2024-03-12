@@ -943,7 +943,7 @@ const Home = ({ navigation }) => {
                 Hi,{user?.FULL_NAME}!
               </Text>
             </View>
-            <TouchableOpacity
+            <TouchableOpacity onPress={()=> navigation.navigate('Notifications')}
               style={{
               }}>
               <Ionicons
